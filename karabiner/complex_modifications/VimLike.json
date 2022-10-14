@@ -1,0 +1,113 @@
+{
+    "title": "VimLike",
+    "rules": [
+        {
+            "description": "Left",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "h",
+                        "modifiers": {
+                            "mandatory": ["right_option"]
+                        }
+                    },
+                    "to": [
+                        {"key_code": "left_arrow"}
+                    ]
+                }
+            ]
+        },
+        {
+            "description": "Down",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "j",
+                        "modifiers": {
+                            "mandatory": ["right_option"]
+                        }
+                    },
+                    "to": [
+                        {"key_code": "down_arrow"}
+                    ]
+                }
+            ]
+        },
+        {
+            "description": "Up",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "k",
+                        "modifiers": {
+                            "mandatory": ["right_option"]
+                        }
+                    },
+                    "to": [
+                        {"key_code": "up_arrow"}
+                    ]
+                }
+            ]
+        },
+        {
+            "description": "Right",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "l",
+                        "modifiers": {
+                            "mandatory": ["right_option"]
+                        }
+                    },
+                    "to": [
+                        {"key_code": "right_arrow"}
+                    ]
+                }
+            ]
+        },
+        {
+            "description": "NextWord",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "w",
+                        "modifiers": {
+                            "mandatory": ["right_option"]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "right_arrow",
+                            "modifiers": ["option"]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "description": "PreviousWord",
+            "manipulators": [
+                {
+                    "type": "basic",
+                    "from": {
+                        "key_code": "b",
+                        "modifiers": {
+                            "mandatory": ["right_option"]
+                        }
+                    },
+                    "to": [
+                        {
+                            "key_code": "left_arrow",
+                            "modifiers": ["option"]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
