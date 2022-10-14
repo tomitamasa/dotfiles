@@ -11,6 +11,7 @@ fi
 
 
 if [ $OS == "Mac" ]; then
+  brew install karabiner
   mkdir -p ~/.config/karabiner/assets
   ln -s ~/dotfiles/karabiner/complex_modifications ~/.config/karabiner/assets
 elif [ $OS == "Linux" ]; then
