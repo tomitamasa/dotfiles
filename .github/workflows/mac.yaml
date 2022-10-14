@@ -9,4 +9,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run setup.sh
-      run: ./install.sh
+      run: .scripts/install.sh
