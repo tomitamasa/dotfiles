@@ -13,7 +13,7 @@ fi
 config_path=$HOME/.config
 dotfiles_path=$HOME/dotfiles
 if [ $OS == "macOS" ]; then
-  ./brew.sh
+  $dotfiles_path/scripts/brew.sh
   local $karabiner_dst=$config_path/karabiner/assets/complex_modifications
   mkdir -p $karabiner_dst
   ls $dotfiles_path/karabiner/complex_modifications | xargs -I{} ln -s {} $karabiner_dst/{}
