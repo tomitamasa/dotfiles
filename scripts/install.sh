@@ -16,7 +16,7 @@ if [ $OS == "macOS" ]; then
   $dotfiles_path/scripts/brew.sh
   karabiner_dst=$config_path/karabiner/assets/complex_modifications
   mkdir -p $karabiner_dst
-  # ls $dotfiles_path/karabiner/complex_modifications | xargs -I{} ln -s {} $karabiner_dst/{}
+  ls $dotfiles_path/karabiner/complex_modifications | xargs -I{} ln -s {} $karabiner_dst/{}
 elif [ $OS == "Linux" ]; then
   # nothing to do
   apt update
