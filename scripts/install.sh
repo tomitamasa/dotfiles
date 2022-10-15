@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # OS Detection
 if [ "$(uname)" == 'Darwin' ]; then
   OS='macOS'
@@ -9,11 +10,14 @@ else
   exit 1
 fi
 
-
+config_path=$HOME/.config
+dotfiles_path=$HOME/dotfiles
 if [ $OS == "macOS" ]; then
   /bin/bash /brew.sh
-  mkdir -p ~/.config/karabiner/assets
-  ln -s ~/dotfiles/karabiner/complex_modifications ~/.config/karabiner/assets
+  local $karabiner_dst=$config_path/karabiner/assets/complex_modifications
+  mkdir -p $karabiner_dst
+  ls $dotfiles_path/karabiner/complex_modifications | xargs -I{} ln -s {} $karabiner_dst/{}
 elif [ $OS == "Linux" ]; then
+  # nothing to do
   apt update
 fi

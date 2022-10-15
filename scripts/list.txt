@@ -1,9 +1,0 @@
-awscli
-docker-compose
-fish
-git
-go
-jq
-php
-python@3.10
-tree
