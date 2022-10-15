@@ -12,9 +12,12 @@ fi
 
 config_path=$HOME/.config
 if [ $OS == "macOS" ]; then
-  /bin/bash ./scripts/brew.sh
-  /bin/bash ./scripts/karabiner.sh $config_path
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  ./scripts/brew.sh
+  ./scripts/karabiner.sh $config_path
 elif [ $OS == "Linux" ]; then
   # nothing to do
   apt update
 fi
+
+./scripts/fish.sh $config_path
