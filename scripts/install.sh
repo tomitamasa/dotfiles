@@ -22,4 +22,5 @@ fi
 
 ./scripts/fish.sh "$config_path"
 
+mkdir -p "$config_path/git"
 ln -snfv ./git/* "$config_path/git"
