@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # cf. https://zenn.dev/tkomatsu/articles/d7d089acd29cfa4d57b4
 echo "installing Homebrew ..."
 which brew >/dev/null 2>&1 || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
