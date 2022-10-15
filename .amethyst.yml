@@ -1,0 +1,48 @@
+# Use tall and fullscreen layouts
+layouts:
+    - tall
+    - fullscreen
+    - two-pane
+    - floating
+
+# # Add "command" to the default mods
+# mod1:
+#     - option
+#     - shift
+# mod2:
+#     - option
+#     - shift
+#     - command
+
+# Swap the focus keys j, k
+focus-cw:
+    mod: mod1
+    key: j
+focus-ccw:
+    mod: mod1
+    key: k
+
+# なんか実装されてなさそう．．．(2022/10/15)
+# select-tall-layout:
+#     mod: mod1
+#     key: a
+
+# select-two-pane-layout:
+#     mod: mod1
+#     key: s
+
+# select-floating-layout:
+#     mod: mod1
+#     key: d
+
+# select-fullscreen-layout:
+#     mod: mod1
+#     key: f
+
+# Enable focus-follows-mouse
+mouse-follows-focus: true
+focus-follows-mouse: false
+
+# Add 10px margin between windows
+window-margins: true
+window-margin-size: 0

@@ -14,9 +14,12 @@ config_path=$HOME/.config
 if [ $OS == "macOS" ]; then
   ./scripts/brew.sh
   ./scripts/karabiner.sh "$config_path"
+  ln -snfv ./.amethyst.yml "$HOME/.amethyst.yml"
 elif [ $OS == "Linux" ]; then
   # nothing to do
   apt update
 fi
 
 ./scripts/fish.sh "$config_path"
+
+ln -snfv ./git/* "$config_path/git"
