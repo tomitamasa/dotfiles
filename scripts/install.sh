@@ -1,7 +1,7 @@
 #!/bin/bash
 # OS Detection
 if [ "$(uname)" == 'Darwin' ]; then
-  OS='Mac'
+  OS='macOS'
 elif [ "$(expr substr $(uname -s) 1 5)" == 'Linux' ]; then
   OS='Linux'
 else
@@ -10,7 +10,7 @@ else
 fi
 
 
-if [ $OS == "Mac" ]; then
+if [ $OS == "macOS" ]; then
   /bin/bash /brew.sh
   mkdir -p ~/.config/karabiner/assets
   ln -s ~/dotfiles/karabiner/complex_modifications ~/.config/karabiner/assets
