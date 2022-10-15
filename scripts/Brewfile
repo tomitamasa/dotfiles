@@ -11,6 +11,7 @@ brew "go"
 brew "jq"
 brew "mas"
 brew "php"
+brew "shellcheck"
 brew "tree"
 cask "alfred"
 cask "amethyst"
@@ -30,3 +31,7 @@ cask "slack"
 cask "visual-studio-code"
 cask "vivaldi"
 cask "zoom"
+mas "GoodNotes", id: 1444383602
+mas "SafeInCloud Password Manager", id: 883070818
+mas "Toggl Track", id: 1291898086
+mas "Trello", id: 1278508951

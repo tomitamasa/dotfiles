@@ -1,9 +1,9 @@
-  #!/bin/bash
+#!/bin/bash
 
 config_path=$1
 if [ -z "$config_path" ]; then
-    config_path=$HOME/.config
+    config_path="$HOME/.config"
 fi
 
-mkdir -p $config_path/karabiner/assets/complex_modifications
-ln -snfv ./karabiner/complex_modifications/* $config_path/karabiner/assets/complex_modifications
+mkdir -p "$config_path/karabiner/assets/complex_modifications"
+ln -snfv ./karabiner/complex_modifications/* "$config_path/karabiner/assets/complex_modifications"
