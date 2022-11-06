@@ -12,8 +12,20 @@ end
 # peco setting
 set fish_plugins theme peco
 
+# cf. https://public-constructor.com/fish-ghq/
+# ghq + peco
+function ghq_peco_repo
+  set selected_repository (ghq list -p | peco --query "$LBUFFER")
+  if [ -n "$selected_repository" ]
+    cd $selected_repository
+    echo " $selected_repository "
+    commandline -f repaint
+  end
+end
+
 function fish_user_key_bindings
   bind \cr peco_select_history
+  bind \cg ghq_peco_repo
 end
 
 # cf. https://girigiribauer.com/tech/20200420/
