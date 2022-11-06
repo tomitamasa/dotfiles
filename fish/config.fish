@@ -8,6 +8,14 @@ if status is-interactive
     set PATH $HOME/.rd/bin $PATH
 end
 
+# cf.https://zenn.dev/sawao/articles/0b40e80d151d6a
+# peco setting
+set fish_plugins theme peco
+
+function fish_user_key_bindings
+  bind \cr peco_select_history
+end
+
 # cf. https://girigiribauer.com/tech/20200420/
 # git
 alias g "git"
