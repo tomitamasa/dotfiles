@@ -18,5 +18,3 @@ jobs:
 # Lint
     - name: Check .bash_profile
       run: shellcheck ${GITHUB_WORKSPACE}/.bash_profile --exclude=SC2148,SC1090
-    - name: hoge
-      run: echo ${GITHUB_WORKSPACE}
