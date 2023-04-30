@@ -13,11 +13,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up Python 3.x
-      uses: actions/setup-python@v1
-      with:
-        python-version: '3.x'
-        architecture: 'x64'
-
-    - name: Display Python version
-      run: python -c "import sys; print(sys.version)"
+    - name: Install required packages
+      run: brew install shellcheck
+# Lint
+    - name: Check .bash_profile
+      run: shellcheck ${GITHUB_WORKSPACE}/bash_profile --exclude=SC2148,SC1090
