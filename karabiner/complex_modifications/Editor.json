@@ -114,34 +114,6 @@
             ]
         },
         {
-            "description": "DeleteAllForward",
-            "manipulators": [
-                {
-                    "type": "basic",
-                    "from": {
-                        "key_code": "period",
-                        "modifiers": {
-                            "mandatory": [
-                                "right_option"
-                            ]
-                        }
-                    },
-                    "to": [
-                        {
-                            "key_code": "up_arrow",
-                            "modifiers": [
-                                "command",
-                                "shift"
-                            ]
-                        },
-                        {
-                            "key_code": "delete_or_backspace"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
             "description": "SelectBackwardOneWord",
             "manipulators": [
                 {
