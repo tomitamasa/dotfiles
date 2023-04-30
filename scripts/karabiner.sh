@@ -6,4 +6,4 @@ if [ -z "$config_path" ]; then
 fi
 
 mkdir -p "$config_path/karabiner/assets/complex_modifications"
-ln -snfv ./karabiner/complex_modifications/* "$config_path/karabiner/assets/complex_modifications"
+ln -sfv ${PWD}/karabiner/complex_modifications/* "$config_path/karabiner/assets/complex_modifications"
