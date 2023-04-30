@@ -3,21 +3,21 @@ name: lint
 on:
   push:
     branches: [ main ]
-   pull_request:
+  pull_request:
     branches: [ main ]
-    
+
 jobs:
   lint-check:
     runs-on: macos-latest
-    
-  steps:
-  - uses: actions/checkout@v2
-  
-  - name: Setup Python 3.x
-    usea: actions/setup-python@v1
-    with:
-      python-version: '3.x'
-      archtecture: 'x64'
 
-  - name: Display Python version
-    run: python -c "import sys; print(sys.version)"
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+        architecture: 'x64'
+
+    - name: Display Python version
+      run: python -c "import sys; print(sys.version)"
