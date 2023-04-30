@@ -2,57 +2,40 @@
     "title": "InputMethod",
     "rules": [
         {
-            "description": "LeftOptionとdで日本語と英語をトグルで切り替える",
+            "description": "Eisu",
             "manipulators": [
                 {
                     "type": "basic",
-                    "conditions": [
-                        {
-                            "input_sources": [
-                                {
-                                    "language": "ja"
-                                }
-                            ],
-                            "type": "input_source_if"
-                        }
-                    ],
                     "from": {
-                        "key_code": "d",
+                        "key_code": "spacebar",
                         "modifiers": {
-                            "mandatory": ["right_option"]
+                            "mandatory": [
+                                "right_option"
+                            ]
                         }
                     },
-                    "parameters": {
-                        "basic.to_if_held_down_threshold_milliseconds": 100
-                    },
-                    "to_if_alone": [
+                    "to": [
                         {
                             "key_code": "japanese_eisuu"
                         }
                     ]
-                },
+                }
+            ]
+        },
+        {
+            "description": "Kana",
+            "manipulators": [
                 {
                     "type": "basic",
-                    "conditions": [
-                        {
-                            "input_sources": [
-                                {
-                                    "language": "en"
-                                }
-                            ],
-                            "type": "input_source_if"
-                        }
-                    ],
                     "from": {
                         "key_code": "d",
                         "modifiers": {
-                            "mandatory": ["right_option"]
+                            "mandatory": [
+                                "right_option"
+                            ]
                         }
                     },
-                    "parameters": {
-                        "basic.to_if_held_down_threshold_milliseconds": 100
-                    },
-                    "to_if_alone": [
+                    "to": [
                         {
                             "key_code": "japanese_kana"
                         }
