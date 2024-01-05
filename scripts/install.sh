@@ -1,26 +1,16 @@
 #!/bin/bash
 
 # OS Detection
-if [ "$(uname)" == 'Darwin' ]; then
-  OS='macOS'
-elif [ "$(expr substr $(uname -s) 1 5)" == 'Linux' ]; then
-  OS='Linux'
-else
-  echo "Your platform ($(uname -a)) is not supported."
+if [ "$(uname)" != 'Darwin' ]; then
+  echo "Not macOS!"
   exit 1
 fi
 
-config_path=$HOME/.config
-if [ $OS == "macOS" ]; then
-  ./scripts/brew.sh
-  ./scripts/karabiner.sh "$config_path"
-  ln -snfv ./.amethyst.yml "$HOME/.amethyst.yml"
-elif [ $OS == "Linux" ]; then
-  # nothing to do
-  apt update
+if ! command -v brew &>/dev/null; then
+  echo "installing brew"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> /Users/$USER/.zprofile
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+else
+  echo "installed yet"
 fi
-
-./scripts/fish.sh "$config_path"
-
-mkdir -p "$config_path/git"
-ln -snfv ./git/* "$config_path/git"
