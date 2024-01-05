@@ -1,14 +1,20 @@
 #!/bin/bash
 
-# cf. https://zenn.dev/tkomatsu/articles/d7d089acd29cfa4d57b4
-echo "installing Homebrew ..."
-which brew >/dev/null 2>&1 || /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+if ! command -v brew &>/dev/null; then
+  echo "installing brew"
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> /Users/$USER/.zprofile
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+else
+  echo "installed yet"
+fi
 
+# cf. https://zenn.dev/tkomatsu/articles/d7d089acd29cfa4d57b4
 echo "run brew doctor ..."
-which brew >/dev/null 2>&1 && brew doctor
+brew doctor
 
 echo "run brew update ..."
-which brew >/dev/null 2>&1 && brew update
+brew update
 
 echo "ok. run brew upgrade ..."
 brew upgrade
