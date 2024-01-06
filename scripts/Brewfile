@@ -1,3 +1,4 @@
+tap "homebrew/bundle"
 brew "asdf"
 brew "awscli"
 brew "direnv"
@@ -23,5 +24,4 @@ cask "slack"
 cask "visual-studio-code"
 cask "warp"
 mas "SafeInCloud 2", id: 883070818
-tap "homebrew/bundle"
 vscode "MS-CEINTL.vscode-language-pack-ja"
