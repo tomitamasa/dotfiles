@@ -24,48 +24,9 @@ function ghq_peco_repo
 end
 
 function fish_user_key_bindings
-  bind \cr peco_select_history
+  bind \cw peco_select_history
   bind \cg ghq_peco_repo
 end
-
-# cf. https://girigiribauer.com/tech/20200420/
-# git
-alias g "git"
-alias ga "git add"
-alias gaa "git add ."
-alias gb "git branch --all"
-alias gbd "git branch -d "
-alias gc "git commit"
-alias gca "git commit -a"
-alias gco "git checkout"
-alias gcom "git checkout master"
-alias gcod "git checkout develop"
-alias gcob "git checkout -b"
-alias gre "git rebase -i"
-alias gd "git diff"
-alias gl "git log --graph --all --pretty=format:'%Cred%h%Creset %Cgreen(%cI) -%C(yellow)%d%Creset %s %C(bold blue)<%an>%Creset' --abbrev-commit --date=rfc2822"
-alias gp "git pull"
-alias gs "git status"
-alias gst "git stash"
-alias gf "git fetch"
-
-# docker
-alias d "docker"
-alias dc "docker container" # override original dc command
-alias dls 'docker container ls'
-alias di "docker image"
-alias dils "docker image ls"
-alias dn "docker network"
-alias dnls "docker network ls"
-alias dv "docker volume"
-alias dvls "docker volume ls"
-alias dcom "docker-compose"
-alias drun "docker run"
-alias dex "docker exec"
-alias dpull "docker pull"
-
-alias fcon "cat ~/.config/fish/config.fish"
-alias fsou "source ~/.config/fish/config.fish"
 
 # bobthefish prompt
 set -g theme_newline_cursor yes
@@ -81,3 +42,41 @@ set -g theme_show_exit_status yes
 
 # fzf用
 set -U FZF_LEGACY_KEYBINDINGS 0
+
+# asdf用に一応読み込んでおく
+source /opt/homebrew/opt/asdf/libexec/asdf.fish
+
+# git系
+abbr -a ga git add
+abbr -a gca git_commit_all_verbose
+abbr -a gc git commit -v
+abbr -a gp git push origin
+abbr -a gph git push origin HEAD
+abbr -a gpl git pull origin
+abbr -a gb git branch --all
+abbr -a gco git checkout
+abbr -a gswc git switch -c
+abbr -a gsw git switch 
+abbr -a gsm git switch master
+abbr -a gd git diff
+abbr -a gf git fetch
+abbr -a gm git merge
+abbr -a gl git log --graph --all --pretty=format:'%Cred%h%Creset %Cgreen(%cI) -%C(yellow)%d%Creset %s %C(bold blue)<%an>%Creset' --abbrev-commit --date=rfc2822
+abbr -a glo git log --oneline
+abbr -a gs git status
+
+# docker系
+abbr -a dcom docker compose
+abbr -a ded docker compose exec dev-server
+abbr -a dew docker compose exec web
+abbr -a du docker compose up
+abbr -a dd docker compose down
+abbr -a yarn docker compose exec dev-server yarn  
+abbr -a rubo docker compose exec dev-server bundle exec rubocop -a
+abbr -a rc docker compose exec web rails c -s 
+abbr -a rdbrb docker compose exec web rails db:rollback 
+abbr -a rdbmg docker compose exec web rails db:migrate
+
+# fish
+alias fconf "cat ~/.config/fish/config.fish"
+alias fsource "source ~/.config/fish/config.fish"
