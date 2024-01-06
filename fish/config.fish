@@ -66,3 +66,6 @@ alias dpull "docker pull"
 
 alias fcon "cat ~/.config/fish/config.fish"
 alias fsou "source ~/.config/fish/config.fish"
+
+# bobthefish prompt
+set -g theme_newline_cursor yes
