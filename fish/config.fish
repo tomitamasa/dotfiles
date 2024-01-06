@@ -78,3 +78,6 @@ set -g theme_display_git_dirty_verbose yes
 set -g theme_display_git_default_branch yes
 
 set -g theme_show_exit_status yes
+
+# fzf用
+set -U FZF_LEGACY_KEYBINDINGS 0
