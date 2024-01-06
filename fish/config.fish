@@ -24,7 +24,7 @@ function ghq_peco_repo
 end
 
 function fish_user_key_bindings
-  bind \cr peco_select_history
+  bind \cw peco_select_history
   bind \cg ghq_peco_repo
 end
 
@@ -66,3 +66,18 @@ alias dpull "docker pull"
 
 alias fcon "cat ~/.config/fish/config.fish"
 alias fsou "source ~/.config/fish/config.fish"
+
+# bobthefish prompt
+set -g theme_newline_cursor yes
+set -g theme_newline_prompt '$ '
+set -g theme_color_scheme zenburn
+set -g fish_prompt_pwd_dir_length 0
+
+set -g theme_display_git_ahead_verbose yes
+set -g theme_display_git_dirty_verbose yes
+set -g theme_display_git_default_branch yes
+
+set -g theme_show_exit_status yes
+
+# fzf用
+set -U FZF_LEGACY_KEYBINDINGS 0

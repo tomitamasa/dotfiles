@@ -22,22 +22,24 @@ focus-ccw:
     mod: mod1
     key: k
 
-# なんか実装されてなさそう．．．(2022/10/15)
-# select-tall-layout:
-#     mod: mod1
-#     key: a
+# レイアウト用
+# Wideの設定がtwo paneとバッティングする可能性があるので
+# 手動で削除する必要があるかも
+select-tall-layout:
+    mod: mod1
+    key: a
 
-# select-two-pane-layout:
-#     mod: mod1
-#     key: s
+select-two-pane-layout:
+    mod: mod1
+    key: s
 
-# select-floating-layout:
-#     mod: mod1
-#     key: d
+select-fullscreen-layout:
+    mod: mod1
+    key: d
 
-# select-fullscreen-layout:
-#     mod: mod1
-#     key: f
+select-floating-layout:
+    mod: mod1
+    key: f
 
 # Enable focus-follows-mouse
 mouse-follows-focus: true
@@ -45,4 +47,4 @@ focus-follows-mouse: false
 
 # Add 10px margin between windows
 window-margins: true
-window-margin-size: 0
+window-margin-size: 5
