@@ -71,3 +71,4 @@ alias fsou "source ~/.config/fish/config.fish"
 set -g theme_newline_cursor yes
 set -g theme_display_git_ahead_verbose yes
 set -g theme_display_git_dirty_verbose yes
+set -g theme_display_git_default_branch yes
