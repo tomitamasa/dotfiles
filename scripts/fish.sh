@@ -16,3 +16,10 @@ ln -snfv $HOME/dotfiles/fish/config.fish "$config_path/fish"
 ln -snfv $HOME/dotfiles/fish/fish_plugins "$config_path/fish"
 
 ln -snfv $HOME/dotfiles/git/* $config_path/git
+
+# install powerline font
+cd /tmp
+git clone https://github.com/powerline/fonts.git
+cd fonts
+./install.sh
+rm -rf ./fonts
