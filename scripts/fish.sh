@@ -8,7 +8,6 @@ fi
 
 mkdir -p "$config_path/fish/functions"
 mkdir -p "$config_path/fish/completions"
-mkdir -p "$config_path/fish/themes"
 mkdir -p "$config_path/git"
 
 ln -snfv $HOME/dotfiles/fish/completions/* "$config_path/fish/completions"
