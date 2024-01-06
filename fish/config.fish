@@ -81,3 +81,28 @@ set -g theme_show_exit_status yes
 
 # fzf用
 set -U FZF_LEGACY_KEYBINDINGS 0
+
+# asdf用に一応読み込んでおく
+source /opt/homebrew/opt/asdf/libexec/asdf.fish
+
+# [TODO]なおすこと
+abbr -a gca git_commit_all_verbose
+abbr -a gc git commit -v
+abbr -a gp git push origin
+abbr -a gph git push origin HEAD
+abbr -a gpl git pull origin
+abbr -a gswc git switch -c
+abbr -a gsw git switch 
+abbr -a gsm git switch master
+abbr -a gf git fetch
+abbr -a gm git merge
+
+abbr -a ded docker compose exec dev-server
+abbr -a dew docker compose exec web
+abbr -a du docker compose up
+abbr -a dd docker compose down
+abbr -a yarn docker compose exec dev-server yarn  
+abbr -a rubo docker compose exec dev-server bundle exec rubocop -a
+abbr -a rc docker compose exec web rails c -s 
+abbr -a rdbrb docker compose exec web rails db:rollback 
+abbr -a rdbmg docker compose exec web rails db:migrate
