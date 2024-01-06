@@ -6,6 +6,8 @@ if [ -z "$config_path" ]; then
     echo set $config_path
 fi
 
+fisher update
+
 mkdir -p "$config_path/fish/functions"
 mkdir -p "$config_path/fish/completions"
 mkdir -p "$config_path/git"
