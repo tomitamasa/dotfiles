@@ -79,3 +79,6 @@ abbr -a rdbmg docker compose exec web rails db:migrate
 # fish
 alias fconf "cat ~/.config/fish/config.fish"
 alias fsource "source ~/.config/fish/config.fish"
+
+# zoxide用
+zoxide init fish | source
