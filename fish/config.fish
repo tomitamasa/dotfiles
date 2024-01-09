@@ -5,7 +5,6 @@ if status is-interactive
     eval (/opt/homebrew/bin/brew shellenv)
     set PATH $HOME/go/bin $PATH
     set PATH $HOME/bin $PATH
-    set PATH $HOME/.rd/bin $PATH
 end
 
 # cf.https://zenn.dev/sawao/articles/0b40e80d151d6a
