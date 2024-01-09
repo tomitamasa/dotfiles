@@ -12,3 +12,5 @@ jobs:
         run: ./scripts/install.sh
       - name: Run setup.sh
         run: ./scripts/fish.sh
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
