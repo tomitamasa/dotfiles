@@ -6,7 +6,7 @@ if [ -z "$config_path" ]; then
     echo set $config_path
 fi
 
-fisher update
+fish -c "curl -sL git.io/fisher | source && fisher update"
 
 mkdir -p "$config_path/fish/functions"
 mkdir -p "$config_path/fish/completions"
@@ -21,4 +21,4 @@ cd /tmp
 git clone https://github.com/powerline/fonts.git
 cd fonts
 ./install.sh
-rm -rf ./fonts
+rm -rf ../fonts
