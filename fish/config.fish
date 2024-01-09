@@ -5,7 +5,6 @@ if status is-interactive
     eval (/opt/homebrew/bin/brew shellenv)
     set PATH $HOME/go/bin $PATH
     set PATH $HOME/bin $PATH
-    set PATH $HOME/.rd/bin $PATH
 end
 
 # cf.https://zenn.dev/sawao/articles/0b40e80d151d6a
@@ -24,7 +23,7 @@ function ghq_peco_repo
 end
 
 function fish_user_key_bindings
-  bind \cw peco_select_history
+  bind \ct peco_select_history
   bind \cg ghq_peco_repo
 end
 
@@ -80,3 +79,6 @@ abbr -a rdbmg docker compose exec web rails db:migrate
 # fish
 alias fconf "cat ~/.config/fish/config.fish"
 alias fsource "source ~/.config/fish/config.fish"
+
+# zoxide用
+zoxide init fish | source
