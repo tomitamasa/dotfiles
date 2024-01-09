@@ -23,7 +23,7 @@ function ghq_peco_repo
 end
 
 function fish_user_key_bindings
-  bind \cw peco_select_history
+  bind \ct peco_select_history
   bind \cg ghq_peco_repo
 end
 
