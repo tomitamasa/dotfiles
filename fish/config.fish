@@ -45,6 +45,11 @@ set -U FZF_LEGACY_KEYBINDINGS 0
 # asdf用に一応読み込んでおく
 source /opt/homebrew/opt/asdf/libexec/asdf.fish
 
+# 自作に省略コマンドをいい感じにするやつ
+abbr -a scom "cat ~/dotfiles/fish/config.fish | grep" 
+abbr -a lscom "cat ~/dotfiles/fish/config.fish | grep abbr"
+abbr -a acom "vi ~/dotfiles/fish/config.fish" 
+
 # git系
 abbr -a ga git add
 abbr -a gca git_commit_all_verbose
