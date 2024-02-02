@@ -76,7 +76,7 @@ abbr -a dew docker compose exec web
 abbr -a du docker compose up
 abbr -a dd docker compose down
 abbr -a yarn docker compose exec dev-server yarn  
-abbr -a rubo docker compose exec dev-server bundle exec rubocop -a
+abbr -a rubo docker compose exec web bundle exec rubocop -a
 abbr -a rc docker compose exec web rails c -s 
 abbr -a rdbrb docker compose exec web rails db:rollback 
 abbr -a rdbmg docker compose exec web rails db:migrate
