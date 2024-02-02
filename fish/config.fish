@@ -60,7 +60,7 @@ abbr -a gsm git switch master
 abbr -a gd git diff
 abbr -a gf git fetch
 abbr -a gm git merge
-abbr -a gl git log --graph --all --pretty=format:'%Cred%h%Creset %Cgreen(%cI) -%C(yellow)%d%Creset %s %C(bold blue)<%an>%Creset' --abbrev-commit --date=rfc2822
+abbr -a gl "git log --graph --all --pretty=format:'%Cred%h%Creset %Cgreen(%cI) -%C(yellow)%d%Creset %C(bold blue)<%an>%Creset %s' --abbrev-commit"
 abbr -a glo git log --oneline
 abbr -a gs git status
 
