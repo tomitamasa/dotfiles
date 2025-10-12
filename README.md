@@ -26,39 +26,35 @@ cd ~/dotfiles
 - **Docker**: コンテナ環境
 - **AWS CLI**: クラウド管理
 
-## 🐠 Fish設定の管理方針
+## 📁 ファイル構造
 
-### カスタムファイル（Gitで管理）
+### 設定ファイル（Gitで管理）
 ```
-fish/
-├── config.fish          # メイン設定
-├── fish_plugins         # プラグインリスト
-├── functions/
-│   └── *.fish          # 自作関数
-└── completions/
-    └── *.fish          # 自作補完
-```
-
-### プラグインファイル（Gitで除外）
-```
-~/.config/fish/
-├── functions/
-│   ├── _fzf_*          # fzf.fish
-│   ├── _tide_*         # Tide
-│   └── _autopair_*     # autopair.fish
-├── completions/
-│   └── tide.fish       # Tide補完
-└── conf.d/
-    ├── _tide_init.fish # Tide初期化
-    ├── fzf.fish        # fzf設定
-    └── autopair.fish   # autopair設定
+dotfiles/
+├── fish/
+│   ├── config.fish        # メイン設定
+│   ├── fish_plugins       # プラグインリスト
+│   ├── functions/         # カスタム関数
+│   └── completions/       # カスタム補完
+├── git/
+│   ├── config            # Git設定
+│   └── ignore            # グローバルignore
+├── karabiner/            # キーボード設定
+├── scripts/
+│   ├── install.sh        # メインインストーラー
+│   ├── Brewfile          # パッケージ定義
+│   └── lib/              # ユーティリティライブラリ
+│       ├── brew.sh       # Homebrew管理
+│       ├── symlinks.sh   # シンボリンク作成
+│       └── fish.sh       # Fish設定
+└── .zshrc               # Zsh設定
 ```
 
 ### 設計原則
-1. **分離**: 自作ファイルとプラグインファイルを明確に分離
-2. **シンボリンク**: ファイル単位でシンボリンク（ディレクトリ全体はNG）
-3. **除外**: プラグインファイルは`.gitignore`で確実に除外
-4. **自動化**: プラグインは`install.sh`で自動インストール
+1. **モジュラー**: 機能別にファイルを分離
+2. **シンプル**: 複雑な処理を避け、理解しやすい構造
+3. **冪等性**: 何度実行しても安全
+4. **自動化**: 手動設定を最小限に抑制
 
 ## 🔧 主要コマンド
 
