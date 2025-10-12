@@ -24,11 +24,13 @@ function fish_user_key_bindings
 end
 
 # Tide prompt configuration (modern replacement for bobthefish)
-# Tide is configured via `tide configure` command
-# Basic settings can be set here if needed
+# Load custom Tide settings
+if test -f ~/dotfiles/fish/tide_setup.fish
+    source ~/dotfiles/fish/tide_setup.fish
+end
 
-# asdf用に一応読み込んでおく
-source /opt/homebrew/opt/asdf/libexec/asdf.fish
+# asdf用に一応読み込んでおく（警告完全抑制）
+source /opt/homebrew/opt/asdf/libexec/asdf.fish > /dev/null 2>&1
 
 # 自作に省略コマンドをいい感じにするやつ
 abbr -a scom "cat ~/dotfiles/fish/config.fish | grep" 

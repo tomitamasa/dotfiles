@@ -15,6 +15,7 @@ jobs:
 
     - name: Install required packages
       run: brew install shellcheck
-# Lint
-    - name: Check .bash_profile
-      run: shellcheck ${GITHUB_WORKSPACE}/.bash_profile --exclude=SC2148,SC1090
+# Lint scripts
+    - name: Check shell scripts
+      run: |
+        find scripts -name "*.sh" -exec shellcheck {} \;
