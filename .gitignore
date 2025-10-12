@@ -32,3 +32,20 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Fish plugin files (managed by fisher)
+# Plugins install to ~/.config/fish/ (symlinked), but we only track our custom files
+fish/functions/_*
+fish/functions/fzf_configure_bindings.fish
+fish/functions/fish_mode_prompt.fish
+fish/functions/fish_prompt.fish
+fish/functions/tide*
+fish/completions/fzf_configure_bindings.fish
+fish/completions/tide.fish
+fish/conf.d/_*
+fish/conf.d/autopair.fish
+fish/conf.d/fzf.fish
+
+# Backup files created by install.sh
+*.backup
+**/*.backup

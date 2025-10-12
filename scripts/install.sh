@@ -80,10 +80,21 @@ create_symlink() {
     return 0
   fi
   
-  # Backup existing file/link if it exists and is different
+  # Only backup files that are not plugin-generated files
   if [ -e "$target" ] || [ -L "$target" ]; then
-    echo "🔄 Backing up existing $target to $target.backup"
-    mv "$target" "$target.backup"
+    local filename=$(basename "$target")
+    
+    # Skip backup for plugin files (they will be regenerated)
+    case "$filename" in
+      _*|*tide*|*fzf*|fish_mode_prompt.fish|fish_prompt.fish|autopair.fish)
+        echo "🗑️  Removing plugin file: $target"
+        rm -f "$target"
+        ;;
+      *)
+        echo "🔄 Backing up existing $target to $target.backup"
+        mv "$target" "$target.backup"
+        ;;
+    esac
   fi
   
   ln -s "$source" "$target"
@@ -100,9 +111,33 @@ create_symlink "$DOTFILES_DIR/git/ignore" "$HOME/.gitignore_global"
 # Fish shell configuration
 create_symlink "$DOTFILES_DIR/fish/config.fish" "$HOME/.config/fish/config.fish"
 create_symlink "$DOTFILES_DIR/fish/fish_plugins" "$HOME/.config/fish/fish_plugins"
-create_symlink "$DOTFILES_DIR/fish/completions" "$HOME/.config/fish/completions"
-create_symlink "$DOTFILES_DIR/fish/functions" "$HOME/.config/fish/functions"
-create_symlink "$DOTFILES_DIR/fish/conf.d" "$HOME/.config/fish/conf.d"
+
+# Create directories for plugins to install into
+mkdir -p "$HOME/.config/fish/completions"
+mkdir -p "$HOME/.config/fish/functions"
+mkdir -p "$HOME/.config/fish/conf.d"
+
+# Only symlink our custom functions (not plugin files)
+if [ -d "$DOTFILES_DIR/fish/functions" ]; then
+  for func_file in "$DOTFILES_DIR/fish/functions"/*.fish; do
+    if [ -f "$func_file" ]; then
+      filename=$(basename "$func_file")
+      # Only symlink files that actually exist in dotfiles (our custom functions)
+      create_symlink "$func_file" "$HOME/.config/fish/functions/$filename"
+    fi
+  done
+fi
+
+# Only symlink our custom completions (not plugin files)
+if [ -d "$DOTFILES_DIR/fish/completions" ]; then
+  for comp_file in "$DOTFILES_DIR/fish/completions"/*.fish; do
+    if [ -f "$comp_file" ]; then
+      filename=$(basename "$comp_file")
+      # Only symlink files that actually exist in dotfiles (our custom completions)
+      create_symlink "$comp_file" "$HOME/.config/fish/completions/$filename"
+    fi
+  done
+fi
 
 # Zsh configuration
 create_symlink "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
