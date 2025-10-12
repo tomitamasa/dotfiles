@@ -1,6 +1,25 @@
 name: macOS
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'scripts/**'
+      - 'fish/**'
+      - 'git/**'
+      - 'karabiner/**'
+      - '.github/workflows/**'
+      - '*.yml'
+      - '*.yaml'
+  pull_request:
+    paths:
+      - 'scripts/**'
+      - 'fish/**'
+      - 'git/**'
+      - 'karabiner/**'
+      - '.github/workflows/**'
+      - '*.yml'
+      - '*.yaml'
 
 jobs:
   macOS:
