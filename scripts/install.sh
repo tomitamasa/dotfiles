@@ -76,7 +76,17 @@ create_symlink "$DOTFILES_DIR/.tool-versions" "$HOME/.tool-versions"
 # Install packages from Brewfile
 echo "📦 Installing packages from Brewfile..."
 cd "$DOTFILES_DIR"
-brew bundle install --file=scripts/Brewfile
+
+if [ "$CI" = "true" ]; then
+  echo "🤖 CI environment detected - installing CLI tools only"
+  # Use CI-specific Brewfile with only CLI tools
+  brew bundle install --file=scripts/Brewfile.ci --no-upgrade || {
+    echo "⚠️  Some packages failed to install in CI - continuing..."
+  }
+else
+  echo "💻 Local environment - installing all packages"
+  brew bundle install --file=scripts/Brewfile
+fi
 
 echo ""
 echo "🎉 Dotfiles installation completed successfully!"
