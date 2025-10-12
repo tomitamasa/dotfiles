@@ -90,5 +90,4 @@ create_dotfiles_symlinks() {
   create_symlink "$dotfiles_dir/.zprofile" "$HOME/.zprofile"
   create_symlink "$dotfiles_dir/.amethyst.yml" "$HOME/.amethyst.yml"
   create_symlink "$dotfiles_dir/karabiner/complex_modifications" "$HOME/.config/karabiner/assets/complex_modifications"
-  create_symlink "$dotfiles_dir/.tool-versions" "$HOME/.tool-versions"
 }
