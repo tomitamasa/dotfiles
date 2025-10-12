@@ -98,7 +98,8 @@ create_symlink "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
 create_symlink "$DOTFILES_DIR/.amethyst.yml" "$HOME/.amethyst.yml"
 
 # Karabiner configuration
-create_symlink "$DOTFILES_DIR/karabiner/complex_modifications" "$HOME/.config/karabiner/complex_modifications"
+mkdir -p "$HOME/.config/karabiner/assets"
+create_symlink "$DOTFILES_DIR/karabiner/complex_modifications" "$HOME/.config/karabiner/assets/complex_modifications"
 
 # Tool versions
 create_symlink "$DOTFILES_DIR/.tool-versions" "$HOME/.tool-versions"
