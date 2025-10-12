@@ -5,8 +5,18 @@ set -e  # Exit on error
 
 echo "🚀 Starting dotfiles installation..."
 
-# Get the directory where this script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get the directory where this script is located (compatible with both bash and zsh)
+if [ -n "${BASH_SOURCE[0]}" ]; then
+  # Running in bash
+  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+elif [ -n "${(%):-%x}" ] 2>/dev/null; then
+  # Running in zsh
+  SCRIPT_DIR="$(cd "$(dirname "${(%):-%x}")" && pwd)"
+else
+  # Fallback: assume script is in current directory
+  SCRIPT_DIR="$(pwd)"
+fi
+
 DOTFILES_DIR="$(dirname "$SCRIPT_DIR")"
 
 echo "📂 Dotfiles directory: $DOTFILES_DIR"
@@ -25,11 +35,11 @@ if ! command -v brew &>/dev/null; then
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   
   # Add Homebrew to PATH for both Intel and Apple Silicon Macs
-  if [[ -f "/opt/homebrew/bin/brew" ]]; then
+  if [ -f "/opt/homebrew/bin/brew" ]; then
     echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
     eval "$(/opt/homebrew/bin/brew shellenv)"
     export PATH="/opt/homebrew/bin:$PATH"
-  elif [[ -f "/usr/local/bin/brew" ]]; then
+  elif [ -f "/usr/local/bin/brew" ]; then
     echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zprofile  
     eval "$(/usr/local/bin/brew shellenv)"
     export PATH="/usr/local/bin:$PATH"
