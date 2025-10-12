@@ -19,6 +19,11 @@ cask "scroll-reverser"
 cask "slack"
 cask "visual-studio-code"
 mas "SafeInCloud 2", id: 883070818
+
+# Fonts for Tide prompt (Nerd Fonts and Powerline support)
+cask "font-fira-code-nerd-font"
+cask "font-meslo-lg-nerd-font"
+cask "font-hack-nerd-font"
 vscode "github.copilot"
 vscode "github.copilot-chat"
 vscode "github.vscode-pull-request-github"

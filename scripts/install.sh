@@ -66,8 +66,47 @@ fi
 
 # Create necessary directories
 echo "📁 Creating necessary directories..."
-mkdir -p ~/.config/fish
-mkdir -p ~/.config/karabiner
+echo "🔍 Creating $HOME/.config directory..."
+mkdir -p "$HOME/.config" || {
+  echo "❌ Failed to create $HOME/.config directory"
+  exit 1
+}
+
+echo "🔍 Creating $HOME/.config/fish directory..."
+mkdir -p "$HOME/.config/fish" || {
+  echo "❌ Failed to create $HOME/.config/fish directory" 
+  exit 1
+}
+
+echo "🔍 Creating fish subdirectories..."
+mkdir -p "$HOME/.config/fish/completions" || {
+  echo "❌ Failed to create $HOME/.config/fish/completions directory"
+  exit 1
+}
+
+mkdir -p "$HOME/.config/fish/functions" || {
+  echo "❌ Failed to create $HOME/.config/fish/functions directory"
+  exit 1
+}
+
+mkdir -p "$HOME/.config/fish/conf.d" || {
+  echo "❌ Failed to create $HOME/.config/fish/conf.d directory"
+  echo "🔍 Checking parent directory permissions..."
+  ls -la "$HOME/.config/fish" || echo "❌ Cannot list $HOME/.config/fish"
+  exit 1
+}
+
+mkdir -p "$HOME/.config/karabiner" || {
+  echo "❌ Failed to create $HOME/.config/karabiner directory"
+  exit 1
+}
+
+mkdir -p "$HOME/.config/karabiner/assets" || {
+  echo "❌ Failed to create $HOME/.config/karabiner/assets directory"
+  exit 1
+}
+
+echo "✅ All directories created successfully"
 
 # Function to create symlink with backup (idempotent)
 create_symlink() {
@@ -80,10 +119,21 @@ create_symlink() {
     return 0
   fi
   
-  # Backup existing file/link if it exists and is different
+  # Only backup files that are not plugin-generated files
   if [ -e "$target" ] || [ -L "$target" ]; then
-    echo "🔄 Backing up existing $target to $target.backup"
-    mv "$target" "$target.backup"
+    local filename=$(basename "$target")
+    
+    # Skip backup for plugin files (they will be regenerated)
+    case "$filename" in
+      _*|*tide*|*fzf*|fish_mode_prompt.fish|fish_prompt.fish|autopair.fish)
+        echo "🗑️  Removing plugin file: $target"
+        rm -f "$target"
+        ;;
+      *)
+        echo "🔄 Backing up existing $target to $target.backup"
+        mv "$target" "$target.backup"
+        ;;
+    esac
   fi
   
   ln -s "$source" "$target"
@@ -100,9 +150,28 @@ create_symlink "$DOTFILES_DIR/git/ignore" "$HOME/.gitignore_global"
 # Fish shell configuration
 create_symlink "$DOTFILES_DIR/fish/config.fish" "$HOME/.config/fish/config.fish"
 create_symlink "$DOTFILES_DIR/fish/fish_plugins" "$HOME/.config/fish/fish_plugins"
-create_symlink "$DOTFILES_DIR/fish/completions" "$HOME/.config/fish/completions"
-create_symlink "$DOTFILES_DIR/fish/functions" "$HOME/.config/fish/functions"
-create_symlink "$DOTFILES_DIR/fish/conf.d" "$HOME/.config/fish/conf.d"
+
+# Only symlink our custom functions (not plugin files)
+if [ -d "$DOTFILES_DIR/fish/functions" ]; then
+  for func_file in "$DOTFILES_DIR/fish/functions"/*.fish; do
+    if [ -f "$func_file" ]; then
+      filename=$(basename "$func_file")
+      # Only symlink files that actually exist in dotfiles (our custom functions)
+      create_symlink "$func_file" "$HOME/.config/fish/functions/$filename"
+    fi
+  done
+fi
+
+# Only symlink our custom completions (not plugin files)
+if [ -d "$DOTFILES_DIR/fish/completions" ]; then
+  for comp_file in "$DOTFILES_DIR/fish/completions"/*.fish; do
+    if [ -f "$comp_file" ]; then
+      filename=$(basename "$comp_file")
+      # Only symlink files that actually exist in dotfiles (our custom completions)
+      create_symlink "$comp_file" "$HOME/.config/fish/completions/$filename"
+    fi
+  done
+fi
 
 # Zsh configuration
 create_symlink "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
@@ -155,21 +224,31 @@ echo "🐠 Installing fish plugins..."
 if command -v fish &>/dev/null; then
   # Check if fish_plugins file exists and has content
   if [ -f "$HOME/.config/fish/fish_plugins" ] && [ -s "$HOME/.config/fish/fish_plugins" ]; then
-    fish -c "
-      # Install fisher if not present
-      if not type -q fisher
-        echo 'Installing fisher...'
-        curl -sL https://git.io/fisher | source
-      end
-      
-      # Install plugins from fish_plugins file (idempotent)
-      echo 'Installing/updating fish plugins...'
-      fisher install
-      
-      echo 'Fish plugins installation completed'
-    " 2>/dev/null || {
-      echo "⚠️  Fish plugins installation failed - they will be installed on first fish startup"
-    }
+    echo "📋 Found fish_plugins file, installing plugins..."
+    
+    # Read plugins from fish_plugins file
+    PLUGINS=$(cat "$HOME/.config/fish/fish_plugins" | grep -v '^#' | grep -v '^$' | tr '\n' ' ')
+    
+    if [ -n "$PLUGINS" ]; then
+      fish -c "
+        # Install fisher if not present
+        if not type -q fisher
+          echo 'Installing fisher...'
+          curl -sL https://git.io/fisher | source
+        end
+        
+        # Install plugins with explicit plugin list
+        echo 'Installing/updating fish plugins: $PLUGINS'
+        fisher install $PLUGINS
+        
+        echo 'Fish plugins installation completed'
+      " || {
+        echo "⚠️  Fish plugins installation failed - they will be installed on first fish startup"
+        echo "💡 You can manually install with: fish -c 'curl -sL https://git.io/fisher | source && fisher install $PLUGINS'"
+      }
+    else
+      echo "ℹ️  No valid plugins found in fish_plugins file"
+    fi
   else
     echo "ℹ️  No fish_plugins file found or empty - skipping plugin installation"
   fi

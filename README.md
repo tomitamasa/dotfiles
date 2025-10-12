@@ -1,8 +1,8 @@
 # Dotfiles
 
-macOS向けの個人的なdotfiles設定です。Fish shell、モダンなCLIツール、AI開発ツールを使った開発環境を構築できます。
+macOS用の個人dotfiles設定。
 
-## インストール
+## 🚀 インストール
 
 ```bash
 git clone https://github.com/tomitamasa/dotfiles.git ~/dotfiles
@@ -10,131 +10,138 @@ cd ~/dotfiles
 ./scripts/install.sh
 ```
 
-インストール後、ターミナルを再起動するか `source ~/.zshrc` を実行してください。
+## 📁 構成
 
-## 主な内容
+### アプリケーション設定
+- **Git**: グローバル設定とignore
+- **Fish**: シェル設定、カスタムコマンド
+- **Zsh**: デフォルトシェル設定
+- **Amethyst**: タイル型ウィンドウマネージャー
+- **Karabiner**: キーボードカスタマイズ
+- **VSCode**: 拡張機能とワークスペース設定
 
-### CLIツール
-- **fish** - モダンなシェル
-- **fzf** - ファジーファインダー  
-- **ghq** - Gitリポジトリ管理
-- **asdf** - 言語バージョン管理
-- **jq** - JSON処理
-- その他開発に便利なツール
+### 開発ツール
+- **Homebrew**: パッケージマネージャー
+- **asdf**: バージョン管理
+- **Docker**: コンテナ環境
+- **AWS CLI**: クラウド管理
 
-### アプリケーション
-- **Visual Studio Code** - エディタ
-- **Docker Desktop** - コンテナ環境
-- **Raycast** - ランチャー
-- **Karabiner Elements** - キーボードカスタマイズ
-- **Amethyst** - ウィンドウ管理
-- その他
+## 🐠 Fish設定の管理方針
 
-### 設定内容
-- Git設定（エイリアス、グローバルignore）
-- Fish shell設定（略語、関数、プラグイン）
-- Karabinerキーボード設定
-- その他各種dotfiles
-
-## 使い方
-
-### Fish shellの使用
-zshからfishに切り替える：
-```bash
-f        # fishに切り替え
+### カスタムファイル（Gitで管理）
+```
+fish/
+├── config.fish          # メイン設定
+├── fish_plugins         # プラグインリスト
+├── functions/
+│   └── *.fish          # 自作関数
+└── completions/
+    └── *.fish          # 自作補完
 ```
 
-### 主要なショートカット
-- `Ctrl+G` - ghq + fzfでリポジトリ検索
-- `Ctrl+R` - コマンド履歴をfzfで検索
-
-### Gitエイリアス（fish内）
-```bash
-ga    # git add
-gc    # git commit -v
-gp    # git push origin
-gs    # git status
-gd    # git diff
-gb    # git branch --all
+### プラグインファイル（Gitで除外）
+```
+~/.config/fish/
+├── functions/
+│   ├── _fzf_*          # fzf.fish
+│   ├── _tide_*         # Tide
+│   └── _autopair_*     # autopair.fish
+├── completions/
+│   └── tide.fish       # Tide補完
+└── conf.d/
+    ├── _tide_init.fish # Tide初期化
+    ├── fzf.fish        # fzf設定
+    └── autopair.fish   # autopair設定
 ```
 
-### Dockerエイリアス（fish内）
+### 設計原則
+1. **分離**: 自作ファイルとプラグインファイルを明確に分離
+2. **シンボリンク**: ファイル単位でシンボリンク（ディレクトリ全体はNG）
+3. **除外**: プラグインファイルは`.gitignore`で確実に除外
+4. **自動化**: プラグインは`install.sh`で自動インストール
+
+## 🔧 主要コマンド
+
+### Fish
 ```bash
-dcom  # docker compose
-du    # docker compose up
-dd    # docker compose down
+f                     # fishシェルに切り替え
+gca                   # git add -A && git commit -v
+ghq_fzf_repo         # Ctrl+G でリポジトリ検索
 ```
 
-## カスタマイズ
-
-### パッケージの追加
-Brewfileにパッケージを追加：
+### Docker
 ```bash
-echo 'brew "package-name"' >> scripts/Brewfile
-brew bundle install --file=scripts/Brewfile
+dcom                  # docker compose
+ded                   # docker compose exec dev-server
+dew                   # docker compose exec web
 ```
 
-### Fishプラグインの追加
-```bash
-echo 'author/plugin-name' >> fish/fish_plugins
-fisher install
-```
+## 🎨 プロンプト
 
-### Git設定の変更
-`git/config` を直接編集してください。シンボリンク経由で即座に反映されます。
+**Tide**を使用したモダンなプロンプト：
+- Git情報表示
+- 実行時間表示
+- エラーステータス表示
+- Nerd Fontsアイコン対応
 
-## 更新・メンテナンス
+### フォント
+以下のNerd Fontsが自動インストールされます：
+- FiraCode Nerd Font
+- MesloLGS Nerd Font
+- Hack Nerd Font
 
-dotfilesの更新：
+## ⌨️ キーボードカスタマイズ
+
+### Karabiner設定
+- **Caps Lock** → **Right Option**（手動設定が必要）
+- **Home/End**キーのmacOS対応
+- **Vim風**ナビゲーション
+- **アプリ切り替え**最適化
+
+### おすすめ設定手順
+1. Karabiner-Elementsを起動
+2. Simple Modifications → Add item
+3. From: `caps_lock` → To: `right_option`
+
+## 🔄 更新
+
 ```bash
 cd ~/dotfiles
 git pull origin main
-./scripts/install.sh  # 再実行して更新を適用
+./scripts/install.sh  # 冪等性保証
 ```
 
-パッケージの更新：
+## 📝 カスタマイズ
+
+### 新しいFish関数を追加
 ```bash
-brew update && brew upgrade
-fisher update  # fishプラグインの更新
+# fish/functions/my_function.fish に追加
+./scripts/install.sh  # シンボリンクが自動作成される
 ```
 
-## トラブルシューティング
-
-### パッケージインストールが失敗する場合
-ネットワーク問題でインストールが失敗することがあります。スクリプトは3回まで自動リトライしますが、手動で実行することもできます：
-
+### 新しいBrewパッケージを追加
 ```bash
-cd ~/dotfiles
+# scripts/Brewfile にパッケージを追加
 brew bundle install --file=scripts/Brewfile
 ```
 
-### Fishプラグインが読み込まれない場合
-```bash
-fish
-curl -sL https://git.io/fisher | source && fisher install
-```
+## 🏗️ アーキテクチャ
 
-### Git設定が反映されない場合
-シンボリンクが正しく作成されているか確認：
-```bash
-ls -la ~/.gitconfig
-```
+### 冪等性の保証
+- 何度実行しても同じ状態
+- 既存ファイルのバックアップ
+- 重複インストールの回避
 
-### 新しいMacでの使用
-このスクリプトは新しいMacでも使用できます。Homebrewも自動でインストールされます。
+### クロスプラットフォーム対応
+- Intel Mac / Apple Silicon対応
+- CI環境での軽量インストール
+- エラー耐性とリトライ機能
 
-## アンインストール
+### セキュリティ
+- 秘密鍵・認証情報の除外
+- 個人情報の分離
+- 安全なdefault設定
 
-dotfilesを削除したい場合：
-```bash
-# シンボリンクを削除
-rm ~/.gitconfig ~/.zshrc ~/.amethyst.yml
-rm -rf ~/.config/fish ~/.config/karabiner/complex_modifications
+---
 
-# パッケージも削除する場合（オプション）
-brew bundle cleanup --file=scripts/Brewfile --force
-```
-
-## CI/CD
-
-GitHub Actionsでmacος環境での動作確認を自動化しています。
+**🌟 快適な開発環境をお楽しみください！**

@@ -1,7 +1,15 @@
-complete --command fisher --exclusive --long help --description "Print help"
-complete --command fisher --exclusive --long version --description "Print version"
-complete --command fisher --exclusive --condition __fish_use_subcommand --arguments install --description "Install plugins"
-complete --command fisher --exclusive --condition __fish_use_subcommand --arguments update --description "Update installed plugins"
-complete --command fisher --exclusive --condition __fish_use_subcommand --arguments remove --description "Remove installed plugins"
-complete --command fisher --exclusive --condition __fish_use_subcommand --arguments list --description "List installed plugins matching regex"
-complete --command fisher --exclusive --condition "__fish_seen_subcommand_from update remove" --arguments "(fisher list)"
+# fisher completion for fish shell
+# Based on https://github.com/jorgebucaran/fisher
+
+complete -c fisher -f
+complete -c fisher -s h -l help -d 'Show help'
+complete -c fisher -s v -l version -d 'Show version'
+
+# Subcommands
+complete -c fisher -n '__fish_use_subcommand' -a 'install' -d 'Install plugins'
+complete -c fisher -n '__fish_use_subcommand' -a 'update' -d 'Update plugins' 
+complete -c fisher -n '__fish_use_subcommand' -a 'remove' -d 'Remove plugins'
+complete -c fisher -n '__fish_use_subcommand' -a 'list' -d 'List installed plugins'
+
+# Plugin name completion for install/remove commands
+complete -c fisher -n '__fish_seen_subcommand_from remove' -a '(fisher list)' -d 'Installed plugin'
