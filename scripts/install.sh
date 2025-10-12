@@ -66,8 +66,8 @@ fi
 
 # Create necessary directories
 echo "📁 Creating necessary directories..."
-mkdir -p ~/.config/fish
-mkdir -p ~/.config/karabiner
+mkdir -p "$HOME/.config/fish/"{completions,functions,conf.d}
+mkdir -p "$HOME/.config/karabiner/assets"
 
 # Function to create symlink with backup (idempotent)
 create_symlink() {
@@ -111,11 +111,6 @@ create_symlink "$DOTFILES_DIR/git/ignore" "$HOME/.gitignore_global"
 # Fish shell configuration
 create_symlink "$DOTFILES_DIR/fish/config.fish" "$HOME/.config/fish/config.fish"
 create_symlink "$DOTFILES_DIR/fish/fish_plugins" "$HOME/.config/fish/fish_plugins"
-
-# Create directories for plugins to install into
-mkdir -p "$HOME/.config/fish/completions"
-mkdir -p "$HOME/.config/fish/functions"
-mkdir -p "$HOME/.config/fish/conf.d"
 
 # Only symlink our custom functions (not plugin files)
 if [ -d "$DOTFILES_DIR/fish/functions" ]; then
