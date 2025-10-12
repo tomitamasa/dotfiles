@@ -23,10 +23,23 @@ echo "✅ macOS detected"
 if ! command -v brew &>/dev/null; then
   echo "🍺 Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  (echo; echo 'eval "$(/opt/homebrew/bin/brew shellenv)"') >> /Users/$USER/.zprofile
-  eval "$(/opt/homebrew/bin/brew shellenv)"
+  
+  # Add Homebrew to PATH for both Intel and Apple Silicon Macs
+  if [[ -f "/opt/homebrew/bin/brew" ]]; then
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    export PATH="/opt/homebrew/bin:$PATH"
+  elif [[ -f "/usr/local/bin/brew" ]]; then
+    echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zprofile  
+    eval "$(/usr/local/bin/brew shellenv)"
+    export PATH="/usr/local/bin:$PATH"
+  fi
 else
   echo "✅ Homebrew already installed"
+  # Ensure Homebrew is in PATH
+  if command -v brew &>/dev/null; then
+    eval "$(brew shellenv)"
+  fi
 fi
 
 # Create necessary directories
@@ -34,11 +47,18 @@ echo "📁 Creating necessary directories..."
 mkdir -p ~/.config/fish
 mkdir -p ~/.config/karabiner
 
-# Function to create symlink with backup
+# Function to create symlink with backup (idempotent)
 create_symlink() {
   local source="$1"
   local target="$2"
   
+  # Check if the correct symlink already exists
+  if [ -L "$target" ] && [ "$(readlink "$target")" = "$source" ]; then
+    echo "✅ Symlink already exists: $target -> $source"
+    return 0
+  fi
+  
+  # Backup existing file/link if it exists and is different
   if [ -e "$target" ] || [ -L "$target" ]; then
     echo "🔄 Backing up existing $target to $target.backup"
     mv "$target" "$target.backup"
@@ -85,7 +105,25 @@ if [ "$CI" = "true" ]; then
   }
 else
   echo "💻 Local environment - installing all packages"
-  brew bundle install --file=scripts/Brewfile
+  
+  # Retry logic for network issues
+  for attempt in 1 2 3; do
+    echo "📦 Installing packages... (attempt $attempt/3)"
+    
+    if brew bundle install --file=scripts/Brewfile --no-upgrade; then
+      echo "✅ All packages installed successfully"
+      break
+    else
+      if [ $attempt -eq 3 ]; then
+        echo "⚠️  Some packages failed to install after 3 attempts"
+        echo "🔧 You can run 'brew bundle install --file=scripts/Brewfile' manually later"
+        echo "📝 Or install specific failed packages individually with 'brew install <package>'"
+      else
+        echo "⚠️  Some packages failed, retrying in 5 seconds..."
+        sleep 5
+      fi
+    fi
+  done
 fi
 
 echo ""
