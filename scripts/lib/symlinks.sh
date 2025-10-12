@@ -49,22 +49,38 @@ create_dotfiles_symlinks() {
   create_symlink "$dotfiles_dir/fish/fish_plugins" "$HOME/.config/fish/fish_plugins"
   create_symlink "$dotfiles_dir/fish/tide_setup.fish" "$HOME/.config/fish/tide_setup.fish"
   
-  # Custom fish functions
+  # Custom fish functions (copy instead of symlink to avoid git changes)
   if [ -d "$dotfiles_dir/fish/functions" ]; then
     for func_file in "$dotfiles_dir/fish/functions"/*.fish; do
       if [ -f "$func_file" ]; then
         local filename=$(basename "$func_file")
-        create_symlink "$func_file" "$HOME/.config/fish/functions/$filename"
+        local target="$HOME/.config/fish/functions/$filename"
+        
+        # Copy file if it doesn't exist or is different
+        if [ ! -f "$target" ] || ! cmp -s "$func_file" "$target"; then
+          cp "$func_file" "$target"
+          echo "📄 $target (copied)"
+        else
+          echo "✅ $target (up to date)"
+        fi
       fi
     done
   fi
   
-  # Custom fish completions
+  # Custom fish completions (copy instead of symlink to avoid git changes)
   if [ -d "$dotfiles_dir/fish/completions" ]; then
     for comp_file in "$dotfiles_dir/fish/completions"/*.fish; do
       if [ -f "$comp_file" ]; then
         local filename=$(basename "$comp_file")
-        create_symlink "$comp_file" "$HOME/.config/fish/completions/$filename"
+        local target="$HOME/.config/fish/completions/$filename"
+        
+        # Copy file if it doesn't exist or is different
+        if [ ! -f "$target" ] || ! cmp -s "$comp_file" "$target"; then
+          cp "$comp_file" "$target"
+          echo "📄 $target (copied)"
+        else
+          echo "✅ $target (up to date)"
+        fi
       fi
     done
   fi
