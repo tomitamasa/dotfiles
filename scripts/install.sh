@@ -34,13 +34,25 @@ if ! command -v brew &>/dev/null; then
   echo "🍺 Installing Homebrew..."
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   
-  # Add Homebrew to PATH for both Intel and Apple Silicon Macs
+  # Add Homebrew to PATH for both Intel and Apple Silicon Macs (idempotent)
   if [ -f "/opt/homebrew/bin/brew" ]; then
-    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+    # Check if already added to avoid duplication
+    if ! grep -q '/opt/homebrew/bin/brew shellenv' ~/.zprofile 2>/dev/null; then
+      echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+      echo "✅ Added Homebrew to ~/.zprofile"
+    else
+      echo "✅ Homebrew already configured in ~/.zprofile"
+    fi
     eval "$(/opt/homebrew/bin/brew shellenv)"
     export PATH="/opt/homebrew/bin:$PATH"
   elif [ -f "/usr/local/bin/brew" ]; then
-    echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zprofile  
+    # Check if already added to avoid duplication
+    if ! grep -q '/usr/local/bin/brew shellenv' ~/.zprofile 2>/dev/null; then
+      echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zprofile
+      echo "✅ Added Homebrew to ~/.zprofile"
+    else
+      echo "✅ Homebrew already configured in ~/.zprofile"
+    fi
     eval "$(/usr/local/bin/brew shellenv)"
     export PATH="/usr/local/bin:$PATH"
   fi
