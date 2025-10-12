@@ -39,7 +39,6 @@ abbr -a acom "vi ~/dotfiles/fish/config.fish"
 
 # git系 (with --no-pager for safety)
 abbr -a ga git add
-abbr -a gca git_commit_all_verbose
 abbr -a gc git commit -v
 abbr -a gp git push origin
 abbr -a gph git push origin HEAD
