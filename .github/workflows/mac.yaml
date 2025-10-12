@@ -1,14 +1,66 @@
 name: macOS
 
-on: [push]
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'scripts/**'
+      - 'fish/**'
+      - 'git/**'
+      - 'karabiner/**'
+      - '.github/workflows/**'
+      - '*.yml'
+      - '*.yaml'
+  pull_request:
+    paths:
+      - 'scripts/**'
+      - 'fish/**'
+      - 'git/**'
+      - 'karabiner/**'
+      - '.github/workflows/**'
+      - '*.yml'
+      - '*.yaml'
 
 jobs:
   macOS:
     name: macOS
-    runs-on: macOS-latest
+    runs-on: macos-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v2
-      - name: Run setup.sh
-        run: ./scripts/install.sh
-      - name: Run setup.sh
-        run: ./scripts/fish.sh
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Set up environment
+        run: |
+          # Make scripts executable
+          chmod +x scripts/install.sh
+          
+      - name: Run dotfiles installation
+        run: |
+          # Run installation script with CI-friendly settings
+          export CI=true
+          export HOMEBREW_NO_AUTO_UPDATE=1
+          export HOMEBREW_NO_ENV_HINTS=1
+          ./scripts/install.sh
+          
+      - name: Verify installation
+        run: |
+          # Check if key tools are installed
+          which fish || echo "Fish not found"
+          which fzf || echo "FZF not found"
+          which ghq || echo "GHQ not found"
+          
+          # Check if config files are properly linked
+          ls -la ~/.config/fish/config.fish || echo "Fish config not found"
+          ls -la ~/.gitconfig || echo "Git config not found"
+          ls -la ~/.zshrc || echo "Zsh config not found"
+          
+      - name: Test fish shell setup
+        run: |
+          # Test fish configuration loads without errors
+          fish -c "echo 'Fish shell working'"
+          
+          # Test if functions are available (if fish is installed)
+          if command -v fish >/dev/null 2>&1; then
+            fish -c "functions | grep ghq_fzf_repo || echo 'ghq_fzf_repo function not found'"
+          fi

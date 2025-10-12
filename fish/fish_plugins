@@ -1,4 +1,4 @@
-oh-my-fish/plugin-peco
-oh-my-fish/theme-bobthefish
-jethrokuan/fzf
-0rax/fish-bd
+jorgebucaran/fisher
+PatrickF1/fzf.fish
+IlanCosman/tide@v6
+jorgebucaran/autopair.fish
