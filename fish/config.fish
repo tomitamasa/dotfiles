@@ -7,13 +7,9 @@ if status is-interactive
     set PATH $HOME/bin $PATH
 end
 
-# cf.https://zenn.dev/sawao/articles/0b40e80d151d6a
-# peco setting (managed by fish_plugins file)
-
-# cf. https://public-constructor.com/fish-ghq/
-# ghq + peco
-function ghq_peco_repo
-  set selected_repository (ghq list -p | peco --query "$LBUFFER")
+# Modern fzf + ghq integration
+function ghq_fzf_repo
+  set selected_repository (ghq list -p | fzf --query "$argv" --select-1 --exit-0)
   if [ -n "$selected_repository" ]
     cd $selected_repository
     echo " $selected_repository "
@@ -22,24 +18,14 @@ function ghq_peco_repo
 end
 
 function fish_user_key_bindings
-  bind \ct peco_select_history
-  bind \cg ghq_peco_repo
+  # fzf.fish provides Ctrl+R for history, Ctrl+Alt+F for files, etc.
+  # Custom keybinding for ghq
+  bind \cg ghq_fzf_repo
 end
 
-# bobthefish prompt
-set -g theme_newline_cursor yes
-set -g theme_newline_prompt '$ '
-set -g theme_color_scheme zenburn
-set -g fish_prompt_pwd_dir_length 0
-
-set -g theme_display_git_ahead_verbose yes
-set -g theme_display_git_dirty_verbose yes
-set -g theme_display_git_default_branch yes
-
-set -g theme_show_exit_status yes
-
-# fzf用
-set -U FZF_LEGACY_KEYBINDINGS 0
+# Tide prompt configuration (modern replacement for bobthefish)
+# Tide is configured via `tide configure` command
+# Basic settings can be set here if needed
 
 # asdf用に一応読み込んでおく
 source /opt/homebrew/opt/asdf/libexec/asdf.fish
@@ -83,6 +69,3 @@ abbr -a rdbmg docker compose exec web rails db:migrate
 # fish
 alias fconf "cat ~/.config/fish/config.fish"
 alias fsource "source ~/.config/fish/config.fish"
-
-# zoxide用
-zoxide init fish | source
