@@ -155,21 +155,31 @@ echo "🐠 Installing fish plugins..."
 if command -v fish &>/dev/null; then
   # Check if fish_plugins file exists and has content
   if [ -f "$HOME/.config/fish/fish_plugins" ] && [ -s "$HOME/.config/fish/fish_plugins" ]; then
-    fish -c "
-      # Install fisher if not present
-      if not type -q fisher
-        echo 'Installing fisher...'
-        curl -sL https://git.io/fisher | source
-      end
-      
-      # Install plugins from fish_plugins file (idempotent)
-      echo 'Installing/updating fish plugins...'
-      fisher install
-      
-      echo 'Fish plugins installation completed'
-    " 2>/dev/null || {
-      echo "⚠️  Fish plugins installation failed - they will be installed on first fish startup"
-    }
+    echo "📋 Found fish_plugins file, installing plugins..."
+    
+    # Read plugins from fish_plugins file
+    PLUGINS=$(cat "$HOME/.config/fish/fish_plugins" | grep -v '^#' | grep -v '^$' | tr '\n' ' ')
+    
+    if [ -n "$PLUGINS" ]; then
+      fish -c "
+        # Install fisher if not present
+        if not type -q fisher
+          echo 'Installing fisher...'
+          curl -sL https://git.io/fisher | source
+        end
+        
+        # Install plugins with explicit plugin list
+        echo 'Installing/updating fish plugins: $PLUGINS'
+        fisher install $PLUGINS
+        
+        echo 'Fish plugins installation completed'
+      " || {
+        echo "⚠️  Fish plugins installation failed - they will be installed on first fish startup"
+        echo "💡 You can manually install with: fish -c 'curl -sL https://git.io/fisher | source && fisher install $PLUGINS'"
+      }
+    else
+      echo "ℹ️  No valid plugins found in fish_plugins file"
+    fi
   else
     echo "ℹ️  No fish_plugins file found or empty - skipping plugin installation"
   fi
