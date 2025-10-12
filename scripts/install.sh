@@ -66,8 +66,47 @@ fi
 
 # Create necessary directories
 echo "📁 Creating necessary directories..."
-mkdir -p "$HOME/.config/fish/"{completions,functions,conf.d}
-mkdir -p "$HOME/.config/karabiner/assets"
+echo "🔍 Creating $HOME/.config directory..."
+mkdir -p "$HOME/.config" || {
+  echo "❌ Failed to create $HOME/.config directory"
+  exit 1
+}
+
+echo "🔍 Creating $HOME/.config/fish directory..."
+mkdir -p "$HOME/.config/fish" || {
+  echo "❌ Failed to create $HOME/.config/fish directory" 
+  exit 1
+}
+
+echo "🔍 Creating fish subdirectories..."
+mkdir -p "$HOME/.config/fish/completions" || {
+  echo "❌ Failed to create $HOME/.config/fish/completions directory"
+  exit 1
+}
+
+mkdir -p "$HOME/.config/fish/functions" || {
+  echo "❌ Failed to create $HOME/.config/fish/functions directory"
+  exit 1
+}
+
+mkdir -p "$HOME/.config/fish/conf.d" || {
+  echo "❌ Failed to create $HOME/.config/fish/conf.d directory"
+  echo "🔍 Checking parent directory permissions..."
+  ls -la "$HOME/.config/fish" || echo "❌ Cannot list $HOME/.config/fish"
+  exit 1
+}
+
+mkdir -p "$HOME/.config/karabiner" || {
+  echo "❌ Failed to create $HOME/.config/karabiner directory"
+  exit 1
+}
+
+mkdir -p "$HOME/.config/karabiner/assets" || {
+  echo "❌ Failed to create $HOME/.config/karabiner/assets directory"
+  exit 1
+}
+
+echo "✅ All directories created successfully"
 
 # Function to create symlink with backup (idempotent)
 create_symlink() {
