@@ -90,6 +90,7 @@ create_symlink "$DOTFILES_DIR/fish/config.fish" "$HOME/.config/fish/config.fish"
 create_symlink "$DOTFILES_DIR/fish/fish_plugins" "$HOME/.config/fish/fish_plugins"
 create_symlink "$DOTFILES_DIR/fish/completions" "$HOME/.config/fish/completions"
 create_symlink "$DOTFILES_DIR/fish/functions" "$HOME/.config/fish/functions"
+create_symlink "$DOTFILES_DIR/fish/conf.d" "$HOME/.config/fish/conf.d"
 
 # Zsh configuration
 create_symlink "$DOTFILES_DIR/.zshrc" "$HOME/.zshrc"
@@ -137,12 +138,39 @@ else
   done
 fi
 
+# Install fish plugins automatically (idempotent)
+echo "🐠 Installing fish plugins..."
+if command -v fish &>/dev/null; then
+  # Check if fish_plugins file exists and has content
+  if [ -f "$HOME/.config/fish/fish_plugins" ] && [ -s "$HOME/.config/fish/fish_plugins" ]; then
+    fish -c "
+      # Install fisher if not present
+      if not type -q fisher
+        echo 'Installing fisher...'
+        curl -sL https://git.io/fisher | source
+      end
+      
+      # Install plugins from fish_plugins file (idempotent)
+      echo 'Installing/updating fish plugins...'
+      fisher install
+      
+      echo 'Fish plugins installation completed'
+    " 2>/dev/null || {
+      echo "⚠️  Fish plugins installation failed - they will be installed on first fish startup"
+    }
+  else
+    echo "ℹ️  No fish_plugins file found or empty - skipping plugin installation"
+  fi
+else
+  echo "ℹ️  Fish not installed - skipping plugin installation"
+fi
+
 echo ""
 echo "🎉 Dotfiles installation completed successfully!"
 echo ""
 echo "📝 Next steps:"
 echo "  1. Restart your terminal or run: source ~/.zshrc"
 echo "  2. Use 'f' command to switch to fish shell"
-echo "  3. Install fish plugins by running: fisher install"
+echo "  3. Fish plugins and Tide prompt are automatically configured"
 echo ""
 echo "✨ Enjoy your new development environment!"
