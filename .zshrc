@@ -11,3 +11,7 @@ function start_fish() {
 
 # Optional: Add homebrew to PATH (if needed)
 export PATH="/opt/homebrew/bin:$PATH"
+
+# asdf
+. "$HOME/.asdf/asdf.sh"
+
