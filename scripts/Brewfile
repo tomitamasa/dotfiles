@@ -3,7 +3,6 @@ brew "sheldon"
 brew "awscli"
 brew "curl"
 brew "direnv"
-brew "fish"
 brew "fzf"
 brew "ghq"
 brew "jq"
@@ -21,7 +20,7 @@ cask "slack"
 cask "visual-studio-code"
 mas "SafeInCloud 2", id: 883070818
 
-# Fonts for Tide prompt (Nerd Fonts and Powerline support)
+# Nerd Fonts for Powerlevel10k prompt
 cask "font-fira-code-nerd-font"
 cask "font-meslo-lg-nerd-font"
 cask "font-hack-nerd-font"

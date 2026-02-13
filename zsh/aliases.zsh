@@ -36,4 +36,3 @@ alias rdbmg='docker compose exec web rails db:migrate'
 # Shell
 alias zconf='cat ~/dotfiles/zsh/.zshrc'
 alias zsource='source ~/.zshrc'
-alias f='fish'
