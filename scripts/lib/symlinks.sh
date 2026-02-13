@@ -85,9 +85,15 @@ create_dotfiles_symlinks() {
     done
   fi
   
+  # Zsh configuration (primary shell)
+  create_symlink "$dotfiles_dir/zsh/.zshrc" "$HOME/.zshrc"
+  create_symlink "$dotfiles_dir/zsh/.zprofile" "$HOME/.zprofile"
+  create_symlink "$dotfiles_dir/zsh/plugins.toml" "$HOME/.config/sheldon/plugins.toml"
+  if [ -f "$dotfiles_dir/zsh/.p10k.zsh" ]; then
+    create_symlink "$dotfiles_dir/zsh/.p10k.zsh" "$HOME/.p10k.zsh"
+  fi
+
   # Other configurations
-  create_symlink "$dotfiles_dir/.zshrc" "$HOME/.zshrc"
-  create_symlink "$dotfiles_dir/.zprofile" "$HOME/.zprofile"
   create_symlink "$dotfiles_dir/.amethyst.yml" "$HOME/.amethyst.yml"
   create_symlink "$dotfiles_dir/karabiner/complex_modifications" "$HOME/.config/karabiner/assets/complex_modifications"
 }

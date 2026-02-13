@@ -1,4 +1,5 @@
 brew "asdf"
+brew "sheldon"
 brew "awscli"
 brew "curl"
 brew "direnv"
