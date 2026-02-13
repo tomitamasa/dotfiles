@@ -50,3 +50,36 @@ jobs:
             whence -f ghq_fzf_repo > /dev/null
             echo "Zsh config OK"
           '
+
+      - name: Verify .zshrc loads and tool paths
+        run: |
+          brew install fzf asdf ghq
+          DOTFILES_ZSH="$(pwd)/zsh" zsh -c '
+            source '"$(pwd)"'/zsh/.zshrc
+
+            # asdf should be loaded
+            whence -p asdf > /dev/null || { echo "FAIL: asdf not found"; exit 1; }
+            echo "OK: asdf -> $(whence -p asdf)"
+
+            # fzf should be loaded
+            whence -p fzf > /dev/null || { echo "FAIL: fzf not found"; exit 1; }
+            echo "OK: fzf -> $(whence -p fzf)"
+
+            # fzf key-bindings should be loaded (Ctrl+R widget)
+            zle -la | grep -q fzf || { echo "FAIL: fzf key-bindings not loaded"; exit 1; }
+            echo "OK: fzf key-bindings loaded"
+
+            # sheldon should be loaded
+            whence -p sheldon > /dev/null || { echo "FAIL: sheldon not found"; exit 1; }
+            echo "OK: sheldon -> $(whence -p sheldon)"
+
+            # ghq should be loaded
+            whence -p ghq > /dev/null || { echo "FAIL: ghq not found"; exit 1; }
+            echo "OK: ghq -> $(whence -p ghq)"
+
+            # Ctrl+G binding should exist
+            bindkey "^g" | grep -q ghq_fzf_repo || { echo "FAIL: Ctrl+G binding not set"; exit 1; }
+            echo "OK: Ctrl+G -> ghq_fzf_repo"
+
+            echo "All tool paths OK"
+          '
