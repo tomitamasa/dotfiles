@@ -37,50 +37,41 @@ install_packages() {
   local dotfiles_dir="$1"
   
   echo "📦 Installing packages from Brewfile..."
-  cd "$dotfiles_dir"
+  cd "$dotfiles_dir" || return 1
 
-  if [ "$CI" = "true" ]; then
-    echo "🤖 CI environment - installing CLI tools only"
-    brew bundle install --file=scripts/Brewfile.ci --no-upgrade || {
-      echo "⚠️  Some packages failed to install in CI - continuing..."
-    }
-  else
-    echo "💻 Local environment - installing all packages"
-    
-    # Retry logic for network issues
-    for attempt in 1 2 3; do
-      echo "📦 Installing packages... (attempt $attempt/3)"
-      
-      if brew bundle install --file=scripts/Brewfile --no-upgrade; then
-        echo "✅ All packages installed successfully"
-        echo "🎨 Nerd Fonts installed for Tide prompt support"
-        break
+  # Retry logic for network issues
+  for attempt in 1 2 3; do
+    echo "📦 Installing packages... (attempt $attempt/3)"
+
+    if brew bundle install --file=scripts/Brewfile --no-upgrade; then
+      echo "✅ All packages installed successfully"
+      break
+    else
+      if [ $attempt -eq 3 ]; then
+        echo "⚠️  Some packages failed to install after 3 attempts"
+        echo "🔧 You can run 'brew bundle install --file=scripts/Brewfile' manually later"
       else
-        if [ $attempt -eq 3 ]; then
-          echo "⚠️  Some packages failed to install after 3 attempts"
-          echo "🔧 You can run 'brew bundle install --file=scripts/Brewfile' manually later"
-        else
-          echo "⚠️  Some packages failed, retrying in 5 seconds..."
-          sleep 5
-        fi
+        echo "⚠️  Some packages failed, retrying in 5 seconds..."
+        sleep 5
       fi
-    done
-  fi
+    fi
+  done
 }
 
 # Install additional fonts if needed (fallback for older systems)
 install_additional_fonts() {
   echo "🎨 Checking additional font requirements..."
   
-  # Check if we have adequate fonts for Tide
+  # Check if we have adequate fonts for Powerlevel10k
   if ! fc-list | grep -i "nerd\|powerline\|meslo\|fira" >/dev/null 2>&1; then
     echo "⚠️  No Nerd Fonts detected, installing Powerline fonts as fallback..."
     
-    local temp_dir=$(mktemp -d)
-    cd "$temp_dir"
-    
+    local temp_dir
+    temp_dir=$(mktemp -d)
+    cd "$temp_dir" || return 1
+
     if git clone https://github.com/powerline/fonts.git --depth=1; then
-      cd fonts
+      cd fonts || return 1
       ./install.sh
       cd ../..
       rm -rf "$temp_dir"
@@ -90,6 +81,6 @@ install_additional_fonts() {
       rm -rf "$temp_dir"
     fi
   else
-    echo "✅ Adequate fonts found for Tide prompt"
+    echo "✅ Adequate fonts found for Powerlevel10k prompt"
   fi
 }

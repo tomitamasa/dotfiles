@@ -24,12 +24,11 @@ echo "✅ macOS detected"
 # Source utility libraries
 source "$SCRIPT_DIR/lib/brew.sh"
 source "$SCRIPT_DIR/lib/symlinks.sh"
-source "$SCRIPT_DIR/lib/fish.sh"
+source "$SCRIPT_DIR/lib/zsh.sh"
 
 # Create necessary directories
 echo "📁 Creating necessary directories..."
-mkdir -p "$HOME/.config/fish/"{completions,functions,conf.d}
-mkdir -p "$HOME/.config/karabiner/assets"
+mkdir -p "$HOME/.config/"{sheldon,"karabiner/assets"}
 echo "✅ Directories created"
 
 # Install Homebrew
@@ -44,15 +43,15 @@ install_packages "$DOTFILES_DIR"
 # Install additional fonts if needed
 install_additional_fonts
 
-# Install fish plugins
-install_fish_plugins
+# Install Zsh plugins
+install_zsh_plugins
 
 echo ""
 echo "🎉 Dotfiles installation completed successfully!"
 echo ""
 echo "📝 Next steps:"
-echo "  1. Restart your terminal or run: source ~/.zshrc"
-echo "  2. Use 'f' command to switch to fish shell"
-echo "  3. Fish plugins and Tide prompt are automatically configured"
+echo "  1. Restart your terminal or run: exec zsh"
+echo "  2. Run 'p10k configure' to customize your prompt"
+echo "  3. Customize aliases in ~/dotfiles/zsh/aliases.zsh"
 echo ""
 echo "✨ Enjoy your new development environment!"

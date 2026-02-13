@@ -10,12 +10,17 @@ cd ~/dotfiles
 ./scripts/install.sh
 ```
 
+インストール後:
+```bash
+exec zsh                # シェル再起動
+p10k configure          # プロンプトのカスタマイズ
+```
+
 ## 📁 構成
 
 ### アプリケーション設定
+- **Zsh**: メインシェル（Sheldon + Powerlevel10k）
 - **Git**: グローバル設定とignore
-- **Fish**: シェル設定、カスタムコマンド
-- **Zsh**: デフォルトシェル設定
 - **Amethyst**: タイル型ウィンドウマネージャー
 - **Karabiner**: キーボードカスタマイズ
 - **VSCode**: 拡張機能とワークスペース設定
@@ -23,19 +28,22 @@ cd ~/dotfiles
 ### 開発ツール
 - **Homebrew**: パッケージマネージャー
 - **asdf**: バージョン管理
+- **fzf**: ファジーファインダー
+- **ghq**: リポジトリ管理
 - **Docker**: コンテナ環境
 - **AWS CLI**: クラウド管理
 
 ## 📁 ファイル構造
 
-### 設定ファイル（Gitで管理）
 ```
 dotfiles/
-├── fish/
-│   ├── config.fish        # メイン設定
-│   ├── fish_plugins       # プラグインリスト
-│   ├── functions/         # カスタム関数
-│   └── completions/       # カスタム補完
+├── zsh/
+│   ├── .zshrc            # メイン設定
+│   ├── .zprofile         # ログインシェル設定
+│   ├── plugins.toml      # Sheldonプラグイン定義
+│   ├── aliases.zsh       # エイリアス（Git, Docker等）
+│   ├── functions.zsh     # カスタム関数（ghq+fzf等）
+│   └── .p10k.zsh         # Powerlevel10kプロンプト設定
 ├── git/
 │   ├── config            # Git設定
 │   └── ignore            # グローバルignore
@@ -43,11 +51,11 @@ dotfiles/
 ├── scripts/
 │   ├── install.sh        # メインインストーラー
 │   ├── Brewfile          # パッケージ定義
-│   └── lib/              # ユーティリティライブラリ
+│   └── lib/
 │       ├── brew.sh       # Homebrew管理
-│       ├── symlinks.sh   # シンボリンク作成
-│       └── fish.sh       # Fish設定
-└── .zshrc               # Zsh設定
+│       ├── symlinks.sh   # シンボリックリンク作成
+│       └── zsh.sh        # Sheldonプラグイン管理
+└── .amethyst.yml         # ウィンドウマネージャー設定
 ```
 
 ### 設計原則
@@ -58,27 +66,62 @@ dotfiles/
 
 ## 🔧 主要コマンド
 
-### Fish
+### Git
 ```bash
-f                     # fishシェルに切り替え
-gca                   # git add -A && git commit -v
-ghq_fzf_repo         # Ctrl+G でリポジトリ検索
+ga                    # git add
+gc                    # git commit -v
+gs                    # git status
+gd                    # git diff
+gl                    # git log（グラフ表示）
+gp                    # git push origin
+gph                   # git push origin HEAD
+gpl                   # git pull origin
+gsw                   # git switch
+gswc                  # git switch -c
+gb                    # git branch --all
 ```
 
 ### Docker
 ```bash
 dcom                  # docker compose
+du                    # docker compose up
+dd                    # docker compose down
 ded                   # docker compose exec dev-server
 dew                   # docker compose exec web
 ```
 
+### ナビゲーション
+```bash
+Ctrl+G                # ghq + fzf でリポジトリ検索・移動
+Ctrl+R                # fzf でコマンド履歴検索
+Ctrl+T                # fzf でファイル検索
+```
+
+### シェル管理
+```bash
+acom                  # .zshrc を編集
+zsource               # .zshrc を再読み込み
+zconf                 # .zshrc を表示
+scom <keyword>        # エイリアスを検索
+lscom                 # エイリアス一覧
+```
+
 ## 🎨 プロンプト
 
-**Tide**を使用したモダンなプロンプト：
-- Git情報表示
-- 実行時間表示
+**Powerlevel10k**を使用したモダンなプロンプト：
+- Git情報表示（ブランチ、ステータスを色分け）
+- 実行時間表示（3秒以上）
 - エラーステータス表示
 - Nerd Fontsアイコン対応
+
+### Zshプラグイン（Sheldon管理）
+| プラグイン | 機能 |
+|-----------|------|
+| romkatv/powerlevel10k | プロンプトテーマ |
+| zsh-users/zsh-autosuggestions | コマンド入力候補（グレー表示） |
+| zsh-users/zsh-syntax-highlighting | コマンド色分け |
+| hlissner/zsh-autopair | 括弧・クォート自動補完 |
+| zsh-users/zsh-completions | 追加補完定義 |
 
 ### フォント
 以下のNerd Fontsが自動インストールされます：
@@ -109,13 +152,20 @@ git pull origin main
 
 ## 📝 カスタマイズ
 
-### 新しいFish関数を追加
+### エイリアスを追加
 ```bash
-# fish/functions/my_function.fish に追加
-./scripts/install.sh  # シンボリンクが自動作成される
+vi ~/dotfiles/zsh/aliases.zsh   # エイリアスを追記
+source ~/.zshrc                  # 反映
 ```
 
-### 新しいBrewパッケージを追加
+### プラグインを追加
+```bash
+vi ~/dotfiles/zsh/plugins.toml  # [plugins.xxx] セクションを追記
+sheldon lock --update            # プラグインをインストール
+exec zsh                         # 反映
+```
+
+### Brewパッケージを追加
 ```bash
 # scripts/Brewfile にパッケージを追加
 brew bundle install --file=scripts/Brewfile

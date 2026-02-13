@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-test:
+    name: Lint & Test
+    runs-on: macos-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Shellcheck
+        run: |
+          brew install shellcheck
+          find scripts -name "*.sh" -exec shellcheck -x {} \;
+
+      - name: Verify symlink creation
+        run: |
+          mkdir -p "$HOME/.config/"{sheldon,"karabiner/assets"}
+          source scripts/lib/symlinks.sh
+          create_dotfiles_symlinks "$(pwd)"
+
+          # Verify symlinks exist and point to correct targets
+          readlink ~/.zshrc | grep -q "zsh/.zshrc"
+          readlink ~/.zprofile | grep -q "zsh/.zprofile"
+          readlink ~/.gitconfig | grep -q "git/config"
+          readlink ~/.config/sheldon/plugins.toml | grep -q "zsh/plugins.toml"
+          echo "All symlinks OK"
+
+      - name: Verify Sheldon plugins
+        run: |
+          brew install sheldon
+          sheldon lock --update
+          echo "Sheldon plugins OK"
+
+      - name: Verify zsh config loads
+        run: |
+          zsh -c '
+            source '"$(pwd)"'/zsh/aliases.zsh
+            alias ga | grep -q "git add"
+            alias gs | grep -q "git.*status"
+            alias dcom | grep -q "docker compose"
+
+            source '"$(pwd)"'/zsh/functions.zsh
+            whence -f ghq_fzf_repo > /dev/null
+            echo "Zsh config OK"
+          '
