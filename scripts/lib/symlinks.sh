@@ -16,7 +16,8 @@ create_symlink() {
   
   # Handle existing files/links
   if [ -e "$target" ] || [ -L "$target" ]; then
-    local filename=$(basename "$target")
+    local filename
+    filename=$(basename "$target")
     
     mv "$target" "$target.backup"
     echo "🔄 Backed up $filename"

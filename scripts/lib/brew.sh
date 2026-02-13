@@ -37,7 +37,7 @@ install_packages() {
   local dotfiles_dir="$1"
   
   echo "📦 Installing packages from Brewfile..."
-  cd "$dotfiles_dir"
+  cd "$dotfiles_dir" || return 1
 
   if [ "$CI" = "true" ]; then
     echo "🤖 CI environment - installing CLI tools only"
@@ -76,11 +76,12 @@ install_additional_fonts() {
   if ! fc-list | grep -i "nerd\|powerline\|meslo\|fira" >/dev/null 2>&1; then
     echo "⚠️  No Nerd Fonts detected, installing Powerline fonts as fallback..."
     
-    local temp_dir=$(mktemp -d)
-    cd "$temp_dir"
-    
+    local temp_dir
+    temp_dir=$(mktemp -d)
+    cd "$temp_dir" || return 1
+
     if git clone https://github.com/powerline/fonts.git --depth=1; then
-      cd fonts
+      cd fonts || return 1
       ./install.sh
       cd ../..
       rm -rf "$temp_dir"

@@ -11,11 +11,11 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
 
     - name: Install required packages
       run: brew install shellcheck
-# Lint scripts
+
     - name: Check shell scripts
       run: |
-        find scripts -name "*.sh" -exec shellcheck {} \;
+        find scripts -name "*.sh" -exec shellcheck -x {} \;
