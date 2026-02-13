@@ -27,7 +27,7 @@ p10k configure          # プロンプトのカスタマイズ
 
 ### 開発ツール
 - **Homebrew**: パッケージマネージャー
-- **asdf**: バージョン管理
+- **mise**: バージョン管理（asdf後継）
 - **fzf**: ファジーファインダー
 - **ghq**: リポジトリ管理
 - **Docker**: コンテナ環境
@@ -124,10 +124,8 @@ lscom                 # エイリアス一覧
 | zsh-users/zsh-completions | 追加補完定義 |
 
 ### フォント
-以下のNerd Fontsが自動インストールされます：
-- FiraCode Nerd Font
+以下のNerd Fontが自動インストールされます：
 - MesloLGS Nerd Font
-- Hack Nerd Font
 
 ## ⌨️ キーボードカスタマイズ
 

@@ -40,10 +40,9 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 
-# asdf (suppress warnings)
-if [[ -f /opt/homebrew/opt/asdf/libexec/asdf.sh ]]; then
-  source /opt/homebrew/opt/asdf/libexec/asdf.sh 2>/dev/null
-  fpath=(${ASDF_DIR}/completions $fpath)
+# mise (asdf successor)
+if command -v mise &>/dev/null; then
+  eval "$(mise activate zsh)"
 fi
 
 # fzf

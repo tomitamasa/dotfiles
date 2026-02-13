@@ -53,13 +53,13 @@ jobs:
 
       - name: Verify .zshrc loads and tool paths
         run: |
-          brew install fzf asdf ghq
+          brew install fzf mise ghq
           DOTFILES_ZSH="$(pwd)/zsh" zsh -c '
             source '"$(pwd)"'/zsh/.zshrc
 
-            # asdf should be loaded
-            whence -p asdf > /dev/null || { echo "FAIL: asdf not found"; exit 1; }
-            echo "OK: asdf -> $(whence -p asdf)"
+            # mise should be loaded
+            whence -p mise > /dev/null || { echo "FAIL: mise not found"; exit 1; }
+            echo "OK: mise -> $(whence -p mise)"
 
             # fzf should be loaded
             whence -p fzf > /dev/null || { echo "FAIL: fzf not found"; exit 1; }
