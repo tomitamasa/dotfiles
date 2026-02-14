@@ -40,9 +40,12 @@ eval "$(/opt/homebrew/bin/brew shellenv)"
 # Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 
-# mise (asdf successor)
+# Claude Code
+export PATH="$HOME/.local/bin:$PATH"
+
+# mise (asdf successor, shims mode to avoid p10k precmd conflict)
 if command -v mise &>/dev/null; then
-  eval "$(mise activate zsh)"
+  eval "$(mise activate zsh --shims)"
 fi
 
 # fzf
