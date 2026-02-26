@@ -62,6 +62,9 @@ for config_file in "$DOTFILES_ZSH"/{aliases,functions}.zsh; do
   [[ -f "$config_file" ]] && source "$config_file"
 done
 
+# Local secrets (API keys etc. - not tracked in git)
+[[ -f ~/.secrets ]] && source ~/.secrets
+
 # Powerlevel10k config
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
