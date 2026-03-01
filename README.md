@@ -148,6 +148,24 @@ git pull origin main
 ./scripts/install.sh  # 冪等性保証
 ```
 
+## 🔒 シークレット管理
+
+APIキーやトークンは `~/.secrets` に記述（gitで追跡されません）：
+
+```bash
+# ~/.secrets を作成
+touch ~/.secrets
+chmod 600 ~/.secrets
+```
+
+```bash
+# 記述例
+export GITHUB_TOKEN="ghp_xxxx"
+export OPENAI_API_KEY="sk-xxxx"
+```
+
+`.zshrc` が起動時に自動で読み込みます。グローバルgitignoreにより、`.secrets` は全リポジトリで無視されます。
+
 ## 📝 カスタマイズ
 
 ### エイリアスを追加
@@ -182,9 +200,9 @@ brew bundle install --file=scripts/Brewfile
 - エラー耐性とリトライ機能
 
 ### セキュリティ
-- 秘密鍵・認証情報の除外
-- 個人情報の分離
-- 安全なdefault設定
+- **グローバルgitignore**: `.env`, `.secrets`, 秘密鍵等を全リポジトリで自動除外（`git/ignore`）
+- **`~/.secrets`**: APIキー等をgit管理外で安全に読み込み（`.zshrc`でsource）
+- **ファイルパーミッション**: `~/.secrets`は`chmod 600`で保護推奨
 
 ---
 
