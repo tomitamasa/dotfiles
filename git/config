@@ -1,3 +1,5 @@
+[core]
+	excludesfile = ~/.gitignore_global
 [user]
 	name = tomitamasa
 	email = 41310325+tomitamasa@users.noreply.github.com

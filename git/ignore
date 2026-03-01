@@ -1,2 +1,18 @@
+# OS
 .DS_Store
 dist
+
+# Security - secrets and credentials
+.secrets
+.env
+.env.local
+.env.production
+.env.staging
+*.pem
+*.p12
+*.pfx
+*.key
+*_rsa
+*_dsa
+*_ecdsa
+*_ed25519
