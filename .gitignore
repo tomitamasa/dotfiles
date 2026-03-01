@@ -1,4 +1,5 @@
 # Security - Never commit these files
+.secrets
 *.pem
 *.p12
 *.pfx
