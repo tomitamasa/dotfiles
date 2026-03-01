@@ -21,6 +21,7 @@
 # Personal/Local files
 .local/
 .cache/
+data/
 temp/
 tmp/
 
