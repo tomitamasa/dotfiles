@@ -14,10 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: brew install shellcheck sheldon fzf mise ghq
+
       - name: Shellcheck
-        run: |
-          brew install shellcheck
-          find scripts -name "*.sh" -exec shellcheck -x {} \;
+        run: find scripts -name "*.sh" -exec shellcheck -x {} \;
 
       - name: Verify symlink creation
         run: |
@@ -32,9 +33,28 @@ jobs:
           readlink ~/.config/sheldon/plugins.toml | grep -q "zsh/plugins.toml"
           echo "All symlinks OK"
 
+      - name: Verify global gitignore
+        run: |
+          # core.excludesfile must be set
+          git config --global core.excludesfile | grep -q "gitignore_global" \
+            || { echo "FAIL: core.excludesfile not set"; exit 1; }
+          echo "OK: core.excludesfile -> $(git config --global core.excludesfile)"
+
+          # Sensitive files must be ignored in any repo
+          cd "$(mktemp -d)"
+          git init -q
+          touch .env .secrets test.pem normal.txt
+          untracked=$(git status --porcelain)
+          echo "$untracked" | grep -q "normal.txt" \
+            || { echo "FAIL: normal.txt should be untracked"; exit 1; }
+          for f in .env .secrets test.pem; do
+            echo "$untracked" | grep -q "$f" \
+              && { echo "FAIL: $f should be globally ignored"; exit 1; }
+          done
+          echo "Global gitignore OK"
+
       - name: Verify Sheldon plugins
         run: |
-          brew install sheldon
           sheldon lock --update
           echo "Sheldon plugins OK"
 
@@ -53,7 +73,6 @@ jobs:
 
       - name: Verify .zshrc loads and tool paths
         run: |
-          brew install fzf mise ghq
           DOTFILES_ZSH="$(pwd)/zsh" zsh -c '
             source '"$(pwd)"'/zsh/.zshrc
 
