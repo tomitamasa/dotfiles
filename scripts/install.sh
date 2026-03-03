@@ -25,6 +25,7 @@ echo "✅ macOS detected"
 source "$SCRIPT_DIR/lib/brew.sh"
 source "$SCRIPT_DIR/lib/symlinks.sh"
 source "$SCRIPT_DIR/lib/zsh.sh"
+source "$SCRIPT_DIR/lib/macos.sh"
 
 # Create necessary directories
 echo "📁 Creating necessary directories..."
@@ -45,6 +46,9 @@ install_additional_fonts
 
 # Install Zsh plugins
 install_zsh_plugins
+
+# Configure macOS system preferences
+configure_macos
 
 echo ""
 echo "🎉 Dotfiles installation completed successfully!"

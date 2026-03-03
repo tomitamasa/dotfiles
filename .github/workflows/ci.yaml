@@ -53,6 +53,11 @@ jobs:
           done
           echo "Global gitignore OK"
 
+      - name: Verify macOS defaults script
+        run: |
+          source scripts/lib/macos.sh
+          type configure_macos
+
       - name: Verify Sheldon plugins
         run: |
           sheldon lock --update
