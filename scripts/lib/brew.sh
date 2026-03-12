@@ -63,7 +63,17 @@ install_additional_fonts() {
   echo "🎨 Checking additional font requirements..."
   
   # Check if we have adequate fonts for Powerlevel10k
-  if ! fc-list | grep -i "nerd\|powerline\|meslo\|fira" >/dev/null 2>&1; then
+  # fc-list is not available on macOS by default, so check Homebrew cask and ~/Library/Fonts
+  local has_font=false
+  if brew list --cask 2>/dev/null | grep -q "font-.*nerd-font\|font-meslo"; then
+    has_font=true
+  elif ls ~/Library/Fonts/ 2>/dev/null | grep -qi "nerd\|powerline\|meslo\|fira"; then
+    has_font=true
+  elif command -v fc-list &>/dev/null && fc-list | grep -i "nerd\|powerline\|meslo\|fira" >/dev/null 2>&1; then
+    has_font=true
+  fi
+
+  if [ "$has_font" = false ]; then
     echo "⚠️  No Nerd Fonts detected, installing Powerline fonts as fallback..."
     
     local temp_dir
