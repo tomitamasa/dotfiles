@@ -3,6 +3,7 @@
 # Dotfiles installation script for macOS
 # Refactored for simplicity and modularity
 
+# shellcheck source-path=SCRIPTDIR
 set -e  # Exit on error
 
 echo "🚀 Starting dotfiles installation..."
@@ -22,9 +23,13 @@ fi
 echo "✅ macOS detected"
 
 # Source utility libraries
+# shellcheck source=lib/brew.sh
 source "$SCRIPT_DIR/lib/brew.sh"
+# shellcheck source=lib/symlinks.sh
 source "$SCRIPT_DIR/lib/symlinks.sh"
+# shellcheck source=lib/zsh.sh
 source "$SCRIPT_DIR/lib/zsh.sh"
+# shellcheck source=lib/macos.sh
 source "$SCRIPT_DIR/lib/macos.sh"
 
 # Create necessary directories

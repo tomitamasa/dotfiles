@@ -18,7 +18,7 @@ jobs:
         run: brew install shellcheck sheldon fzf mise ghq
 
       - name: Shellcheck
-        run: find scripts -name "*.sh" -exec shellcheck -x {} \;
+        run: find scripts -name '*.sh' -print0 | xargs -0 shellcheck -x
 
       - name: Verify symlink creation
         run: |
