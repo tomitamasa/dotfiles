@@ -3,6 +3,10 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
 
+# Homebrew / PATH (must precede sheldon, mise, fzf — also runs for non-login shells)
+export PATH="/opt/homebrew/bin:$HOME/go/bin:$HOME/bin:$PATH"
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # History
 HISTFILE=~/.zsh_history
 HISTSIZE=50000
@@ -30,12 +34,6 @@ setopt INTERACTIVE_COMMENTS
 
 # Sheldon plugins
 eval "$(sheldon source)"
-
-# PATH
-export PATH="/opt/homebrew/bin:$HOME/go/bin:$HOME/bin:$PATH"
-
-# Homebrew
-eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"

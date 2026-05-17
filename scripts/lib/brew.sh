@@ -17,6 +17,7 @@ install_homebrew() {
   # Add Homebrew to PATH for both Intel and Apple Silicon Macs
   if [ -f "/opt/homebrew/bin/brew" ]; then
     if ! grep -q '/opt/homebrew/bin/brew shellenv' ~/.zprofile 2>/dev/null; then
+      # shellcheck disable=SC2016  # literal line is written verbatim to ~/.zprofile by design
       echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
       echo "✅ Added Homebrew to ~/.zprofile"
     fi
@@ -24,6 +25,7 @@ install_homebrew() {
     export PATH="/opt/homebrew/bin:$PATH"
   elif [ -f "/usr/local/bin/brew" ]; then
     if ! grep -q '/usr/local/bin/brew shellenv' ~/.zprofile 2>/dev/null; then
+      # shellcheck disable=SC2016  # literal line is written verbatim to ~/.zprofile by design
       echo 'eval "$(/usr/local/bin/brew shellenv)"' >> ~/.zprofile
       echo "✅ Added Homebrew to ~/.zprofile"
     fi
@@ -67,7 +69,7 @@ install_additional_fonts() {
   local has_font=false
   if brew list --cask 2>/dev/null | grep -q "font-.*nerd-font\|font-meslo"; then
     has_font=true
-  elif ls ~/Library/Fonts/ 2>/dev/null | grep -qi "nerd\|powerline\|meslo\|fira"; then
+  elif [ -n "$(find "$HOME/Library/Fonts" -maxdepth 1 \( -iname '*nerd*' -o -iname '*powerline*' -o -iname '*meslo*' -o -iname '*fira*' \) -print -quit 2>/dev/null)" ]; then
     has_font=true
   elif command -v fc-list &>/dev/null && fc-list | grep -i "nerd\|powerline\|meslo\|fira" >/dev/null 2>&1; then
     has_font=true
