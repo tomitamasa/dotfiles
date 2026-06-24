@@ -1,12 +1,35 @@
+# Taps
+tap "hashicorp/tap"
+tap "leoafarias/fvm"
+
+# === CLI (formula) ===
+# シェル・開発基盤
 brew "mise"
 brew "sheldon"
-brew "awscli"
 brew "direnv"
 brew "fzf"
 brew "ghq"
+brew "gh"
 brew "jq"
 brew "mas"
+# クラウド / DB / IaC
+brew "awscli"
+brew "cloud-sql-proxy"
+brew "flyctl"
+brew "hashicorp/tap/terraform"
+brew "libpq"
 brew "mysql"
+# モバイル開発
+brew "cocoapods"
+brew "leoafarias/fvm/fvm"
+# メディア / 制作
+brew "ffmpeg"
+brew "poppler"
+brew "librsvg"
+brew "dvdauthor"
+brew "cdrtools"
+
+# === GUI (cask) ===
 cask "amethyst"
 cask "docker-desktop"
 cask "google-chrome"
@@ -14,18 +37,53 @@ cask "karabiner-elements"
 cask "raycast"
 cask "scroll-reverser"
 cask "slack"
+cask "obsidian"
+cask "inkscape"
 cask "visual-studio-code"
-mas "SafeInCloud 2", id: 883070818
-
+cask "android-studio"
+cask "android-commandlinetools"
+cask "flutter"
+cask "gcloud-cli"
 # Nerd Fonts for Powerlevel10k prompt
 cask "font-meslo-lg-nerd-font"
-vscode "github.copilot"
-vscode "github.copilot-chat"
+
+# === Mac App Store ===
+mas "Xcode", id: 497799835
+mas "Developer", id: 640199958
+mas "Keynote", id: 409183694
+mas "Numbers", id: 409201541
+mas "Pages", id: 409203825
+mas "iMovie", id: 408981434
+mas "GarageBand", id: 682658836
+mas "Kindle", id: 302584613
+mas "LINE", id: 539883307
+mas "SafeInCloud 2", id: 883070818
+mas "Windows App", id: 1295203466
+
+# === VSCode 拡張 ===
+vscode "anthropic.claude-code"
 vscode "github.vscode-pull-request-github"
+vscode "eamodio.gitlens"
 vscode "ms-ceintl.vscode-language-pack-ja"
 vscode "ms-vscode-remote.remote-containers"
 vscode "ms-vsliveshare.vsliveshare"
+vscode "ms-python.python"
+vscode "ms-python.vscode-pylance"
+vscode "ms-python.debugpy"
+vscode "ms-python.vscode-python-envs"
+vscode "ms-toolsai.jupyter"
+vscode "ms-toolsai.jupyter-keymap"
+vscode "ms-toolsai.jupyter-renderers"
+vscode "ms-toolsai.vscode-jupyter-cell-tags"
+vscode "ms-toolsai.vscode-jupyter-slideshow"
+vscode "biomejs.biome"
+vscode "vue.volar"
+vscode "sianglim.slim"
+vscode "bierner.markdown-mermaid"
+vscode "shd101wyy.markdown-preview-enhanced"
+vscode "yzane.markdown-pdf"
+vscode "mechatroner.rainbow-csv"
+vscode "ryu1kn.partial-diff"
 vscode "oderwat.indent-rainbow"
-vscode "saoudrizwan.claude-dev"
 vscode "streetsidesoftware.code-spell-checker"
 vscode "teabyii.ayu"
