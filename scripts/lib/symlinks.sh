@@ -45,6 +45,10 @@ create_dotfiles_symlinks() {
     create_symlink "$dotfiles_dir/zsh/.p10k.zsh" "$HOME/.p10k.zsh"
   fi
 
+  # Ghostty (ターミナルエミュレータ)
+  mkdir -p "$HOME/.config/ghostty"
+  create_symlink "$dotfiles_dir/ghostty/config" "$HOME/.config/ghostty/config"
+
   # Other configurations
   create_symlink "$dotfiles_dir/.amethyst.yml" "$HOME/.amethyst.yml"
   create_symlink "$dotfiles_dir/karabiner/complex_modifications" "$HOME/.config/karabiner/assets/complex_modifications"
