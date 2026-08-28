@@ -65,12 +65,15 @@ dotfiles/
 │   └── assets/           # インポート用の複雑なルール定義
 ├── scripts/
 │   ├── install.sh        # メインインストーラー
+│   ├── check.sh          # 静的検査（CIと共通・手元でも回せる）
+│   ├── check-brewfile.sh # Brewfile のパッケージ実在検査
 │   ├── Brewfile          # パッケージ定義（全端末共通）
 │   ├── Brewfile.personal # 私用端末でのみ入れるもの
 │   └── lib/
 │       ├── brew.sh       # Homebrew管理
 │       ├── symlinks.sh   # シンボリックリンク作成
-│       └── zsh.sh        # Sheldonプラグイン管理
+│       ├── zsh.sh        # Sheldonプラグイン管理
+│       └── check_karabiner.py # karabiner.json の構造検査
 └── .amethyst.yml         # ウィンドウマネージャー設定
 ```
 
@@ -187,6 +190,29 @@ GUI で設定を変えると `karabiner/karabiner.json` に差分が出るので
 ```bash
 launchctl kickstart -k "gui/$(id -u)/org.pqrs.service.agent.karabiner_console_user_server"
 ```
+
+## ✅ 検査
+
+コミット前に手元で回せます。CI の静的検査ジョブは同じスクリプトを呼んでいるので、
+ここが通れば CI も通ります。
+
+```bash
+./scripts/check.sh           # 設定ファイルの妥当性 + 秘密情報スキャン
+./scripts/check-brewfile.sh  # Brewfile のパッケージが実在するか（brew が必要）
+```
+
+`check.sh` が見ているもの:
+
+| 対象 | 見つけたいもの |
+|------|--------------|
+| shellcheck / `zsh -n` | シェルスクリプトと zsh 設定の構文エラー |
+| JSON / TOML / YAML | 壊れた設定ファイル（配ると新しいマシンでキーボードやシェルが動かない） |
+| Karabiner の構造 | JSON としては読めるが manipulators が欠けている等、リマップが効かない状態 |
+| 秘密情報・個人情報 | 絶対パスのハードコード、トークン・秘密鍵、意図しないメールアドレス |
+
+このリポジトリは public です。`brew bundle dump` のように実機の状態を機械的に吐いた
+ファイルは、絶対パスや社内固有のパッケージ名をそのまま素通しします。目視では滑るので
+機械で見ます。
 
 ## 🔄 更新
 
