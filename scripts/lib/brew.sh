@@ -34,30 +34,75 @@ install_homebrew() {
   fi
 }
 
-# Install packages from Brewfile
-install_packages() {
-  local dotfiles_dir="$1"
-  
-  echo "📦 Installing packages from Brewfile..."
-  cd "$dotfiles_dir" || return 1
+# Resolve the machine profile used to pick an extra Brewfile.
+# 私用端末と業務端末で入れるものを分けるための仕組み。
+# 優先順: 環境変数 DOTFILES_PROFILE > ~/.dotfiles-profile > 未設定（共通のみ）
+# プロファイル名はファイル名の一部になるため、英数字・ハイフン・アンダースコアに限る。
+resolve_profile() {
+  local profile=""
 
-  # Retry logic for network issues
+  if [ -n "${DOTFILES_PROFILE:-}" ]; then
+    profile="$DOTFILES_PROFILE"
+  elif [ -f "$HOME/.dotfiles-profile" ]; then
+    profile=$(head -n 1 "$HOME/.dotfiles-profile" | tr -d '[:space:]')
+  fi
+
+  case "$profile" in
+    "") return 0 ;;
+    *[!a-zA-Z0-9_-]*)
+      echo "⚠️  プロファイル名に使えない文字が含まれています: $profile" >&2
+      return 0
+      ;;
+    *) echo "$profile" ;;
+  esac
+}
+
+# Install packages from a single Brewfile (with retry for network issues)
+install_brewfile() {
+  local file="$1"
+
   for attempt in 1 2 3; do
-    echo "📦 Installing packages... (attempt $attempt/3)"
+    echo "📦 Installing packages from $file... (attempt $attempt/3)"
 
-    if brew bundle install --file=scripts/Brewfile --no-upgrade; then
-      echo "✅ All packages installed successfully"
-      break
+    if brew bundle install --file="$file" --no-upgrade; then
+      echo "✅ $file: all packages installed successfully"
+      return 0
+    fi
+
+    if [ "$attempt" -eq 3 ]; then
+      echo "⚠️  $file: some packages failed to install after 3 attempts"
+      echo "🔧 You can run 'brew bundle install --file=$file' manually later"
     else
-      if [ $attempt -eq 3 ]; then
-        echo "⚠️  Some packages failed to install after 3 attempts"
-        echo "🔧 You can run 'brew bundle install --file=scripts/Brewfile' manually later"
-      else
-        echo "⚠️  Some packages failed, retrying in 5 seconds..."
-        sleep 5
-      fi
+      echo "⚠️  Some packages failed, retrying in 5 seconds..."
+      sleep 5
     fi
   done
+}
+
+# Install packages from the shared Brewfile plus the profile overlay
+install_packages() {
+  local dotfiles_dir="$1"
+  local profile overlay
+
+  cd "$dotfiles_dir" || return 1
+
+  install_brewfile "scripts/Brewfile"
+
+  profile=$(resolve_profile)
+  if [ -z "$profile" ]; then
+    echo "ℹ️  プロファイル未設定のため共通分のみ入れました"
+    echo "   私用端末なら: echo personal > ~/.dotfiles-profile"
+    return 0
+  fi
+
+  overlay="scripts/Brewfile.$profile"
+  if [ ! -f "$overlay" ]; then
+    echo "⚠️  プロファイル '$profile' 用の $overlay が無いため共通分のみ入れました"
+    return 0
+  fi
+
+  echo "📦 プロファイル: $profile"
+  install_brewfile "$overlay"
 }
 
 # Install additional fonts if needed (fallback for older systems)
