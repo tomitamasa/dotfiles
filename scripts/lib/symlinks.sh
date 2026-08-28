@@ -7,25 +7,34 @@
 create_symlink() {
   local source="$1"
   local target="$2"
-  
-  # Check if the correct symlink already exists
+
+  # Already pointing where we want: nothing to do
   if [ -L "$target" ] && [ "$(readlink "$target")" = "$source" ]; then
     echo "✅ $target"
     return 0
   fi
-  
+
   # Ensure the parent directory exists
   mkdir -p "$(dirname "$target")"
 
-  # Handle existing files/links
-  if [ -e "$target" ] || [ -L "$target" ]; then
-    local filename
-    filename=$(basename "$target")
-    
-    mv "$target" "$target.backup"
-    echo "🔄 Backed up $filename"
+  if [ -L "$target" ]; then
+    # A symlink pointing somewhere else. Backing it up would only leave
+    # broken links behind, so replace it outright.
+    rm "$target"
+    echo "🔄 Relinked $(basename "$target")"
+  elif [ -e "$target" ]; then
+    # A real file or directory. Always keep it, and never reuse a backup
+    # name that is already taken -- `mv dir dir.backup` would move the
+    # directory *inside* the existing backup and nest it one level deeper
+    # on every run.
+    local backup="$target.backup"
+    if [ -e "$backup" ]; then
+      backup="$target.backup.$(date +%Y%m%d%H%M%S)"
+    fi
+    mv "$target" "$backup"
+    echo "🔄 Backed up $(basename "$target") -> $(basename "$backup")"
   fi
-  
+
   ln -s "$source" "$target"
   echo "🔗 $target"
 }
@@ -56,5 +65,9 @@ create_dotfiles_symlinks() {
 
   # Other configurations
   create_symlink "$dotfiles_dir/.amethyst.yml" "$HOME/.amethyst.yml"
-  create_symlink "$dotfiles_dir/karabiner/complex_modifications" "$HOME/.config/karabiner/assets/complex_modifications"
+  # Karabiner: karabiner.json 自体を symlink にすると、Karabiner-Elements が
+  # 保存のたびに symlink を消してファイルで置き換えてしまう。公式ドキュメントの
+  # 指示どおりディレクトリごと張る。
+  # https://karabiner-elements.pqrs.org/docs/manual/misc/configuration-file-path/
+  create_symlink "$dotfiles_dir/karabiner" "$HOME/.config/karabiner"
 }

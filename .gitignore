@@ -18,6 +18,9 @@
 *.log
 .DS_Store
 
+# Karabiner が自動生成するバックアップ（symlink 越しにリポジトリ内へ書かれる）
+karabiner/automatic_backups/
+
 # Personal/Local files
 .local/
 .cache/

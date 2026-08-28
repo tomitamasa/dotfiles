@@ -22,7 +22,6 @@ jobs:
 
       - name: Verify symlink creation
         run: |
-          mkdir -p "$HOME/.config/"{sheldon,"karabiner/assets"}
           source scripts/lib/symlinks.sh
           create_dotfiles_symlinks "$(pwd)"
 
@@ -33,7 +32,30 @@ jobs:
           readlink ~/.config/sheldon/plugins.toml | grep -q "zsh/plugins.toml"
           readlink ~/.config/ghostty/config | grep -q "ghostty/config"
           readlink ~/.config/atuin/config.toml | grep -q "atuin/config.toml"
+          readlink ~/.config/karabiner | grep -q "/karabiner$"
+          test -f ~/.config/karabiner/karabiner.json
           echo "All symlinks OK"
+
+      - name: Verify symlink creation is idempotent
+        run: |
+          source scripts/lib/symlinks.sh
+
+          # 2回・3回と流しても退避ファイルが増えず、結果が変わらないこと
+          before=$(find "$HOME" -maxdepth 3 -name '*.backup*' | sort)
+          create_dotfiles_symlinks "$(pwd)" > /dev/null
+          create_dotfiles_symlinks "$(pwd)" > /dev/null
+          after=$(find "$HOME" -maxdepth 3 -name '*.backup*' | sort)
+
+          if [ "$before" != "$after" ]; then
+            echo "FAIL: 再実行で退避ファイルが増えました"
+            diff <(echo "$before") <(echo "$after") || true
+            exit 1
+          fi
+
+          readlink ~/.zshrc | grep -q "zsh/.zshrc"
+          readlink ~/.config/karabiner | grep -q "/karabiner$"
+          test -f ~/.config/karabiner/karabiner.json
+          echo "Idempotent OK"
 
       - name: Verify global gitignore
         run: |
