@@ -14,6 +14,9 @@ create_symlink() {
     return 0
   fi
   
+  # Ensure the parent directory exists
+  mkdir -p "$(dirname "$target")"
+
   # Handle existing files/links
   if [ -e "$target" ] || [ -L "$target" ]; then
     local filename
@@ -45,9 +48,11 @@ create_dotfiles_symlinks() {
     create_symlink "$dotfiles_dir/zsh/.p10k.zsh" "$HOME/.p10k.zsh"
   fi
 
-  # Ghostty (ターミナルエミュレータ)
-  mkdir -p "$HOME/.config/ghostty"
+  # Ghostty（cmux も同じ設定ファイルを読む）
   create_symlink "$dotfiles_dir/ghostty/config" "$HOME/.config/ghostty/config"
+
+  # atuin（シェル履歴）
+  create_symlink "$dotfiles_dir/atuin/config.toml" "$HOME/.config/atuin/config.toml"
 
   # Other configurations
   create_symlink "$dotfiles_dir/.amethyst.yml" "$HOME/.amethyst.yml"

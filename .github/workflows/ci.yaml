@@ -32,6 +32,7 @@ jobs:
           readlink ~/.gitconfig | grep -q "git/config"
           readlink ~/.config/sheldon/plugins.toml | grep -q "zsh/plugins.toml"
           readlink ~/.config/ghostty/config | grep -q "ghostty/config"
+          readlink ~/.config/atuin/config.toml | grep -q "atuin/config.toml"
           echo "All symlinks OK"
 
       - name: Verify global gitignore

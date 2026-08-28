@@ -1,11 +1,16 @@
-# Enable Powerlevel10k instant prompt (must be at top)
+# Homebrew / PATH (must precede direnv, sheldon, mise, fzf — also runs for non-login shells)
+export PATH="/opt/homebrew/bin:$HOME/go/bin:$HOME/bin:$PATH"
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# direnv: apply environment before instant prompt so its console output
+# doesn't trigger the p10k warning (official p10k pattern; hook is installed
+# at the bottom of this file)
+(( ${+commands[direnv]} )) && emulate zsh -c "$(direnv export zsh)"
+
+# Enable Powerlevel10k instant prompt (keep near top; no console output below this)
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-
-# Homebrew / PATH (must precede sheldon, mise, fzf — also runs for non-login shells)
-export PATH="/opt/homebrew/bin:$HOME/go/bin:$HOME/bin:$PATH"
-eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # History
 HISTFILE=~/.zsh_history
@@ -73,6 +78,18 @@ if [[ -f /opt/homebrew/opt/fzf/shell/key-bindings.zsh ]]; then
   source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
 fi
 
+# atuin: Ctrl+R を置き換える（fzf の Ctrl+T / Alt+C、ghq の Ctrl+G はそのまま）
+# 上矢印は zsh 標準の履歴のまま残す
+if command -v atuin &>/dev/null; then
+  eval "$(atuin init zsh --disable-up-arrow)"
+fi
+
+# zoxide: cd を置き換える（実在パスは builtin cd へ委譲されるため
+# AUTO_CD / AUTO_PUSHD はそのまま効く。cdi で fzf 選択）
+if command -v zoxide &>/dev/null; then
+  eval "$(zoxide init zsh --cmd cd)"
+fi
+
 # Load modular configs
 DOTFILES_ZSH="${DOTFILES_ZSH:-$HOME/dotfiles/zsh}"
 for config_file in "$DOTFILES_ZSH"/{aliases,functions}.zsh; do
@@ -86,7 +103,8 @@ done
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh
 
-# direnv
-if command -v direnv &>/dev/null; then
-  eval "$(direnv hook zsh)"
-fi
+# direnv hook (env already applied before instant prompt at the top)
+(( ${+commands[direnv]} )) && emulate zsh -c "$(direnv hook zsh)"
+
+# sentry
+fpath=("$HOME/.local/share/zsh/site-functions" $fpath)

@@ -34,7 +34,7 @@ source "$SCRIPT_DIR/lib/macos.sh"
 
 # Create necessary directories
 echo "📁 Creating necessary directories..."
-mkdir -p "$HOME/.config/"{sheldon,"karabiner/assets"}
+mkdir -p "$HOME/.config/"{sheldon,ghostty,atuin,"karabiner/assets"}
 echo "✅ Directories created"
 
 # Install Homebrew

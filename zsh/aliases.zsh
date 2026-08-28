@@ -1,6 +1,15 @@
+# Modern CLI（標準コマンドの置き換え）
+# 素の挙動が必要なときは `command cat` のように command を前置する
+alias cat='bat --paging=never'
+alias ls='eza --icons=auto --group-directories-first'
+alias ll='eza -l --icons=auto --git --group-directories-first'
+alias la='eza -la --icons=auto --git --group-directories-first'
+alias lt='eza --tree --level=2 --icons=auto'
+alias lg='lazygit'
+
 # Config management
-alias scom='cat ~/dotfiles/zsh/aliases.zsh | grep'
-alias lscom='cat ~/dotfiles/zsh/aliases.zsh | grep "alias "'
+alias scom='rg --no-heading ~/dotfiles/zsh/aliases.zsh -e'
+alias lscom='rg "^alias " ~/dotfiles/zsh/aliases.zsh'
 alias acom='vi ~/dotfiles/zsh/.zshrc'
 
 # Git
@@ -17,7 +26,6 @@ alias gsm='git switch master'
 alias gd='git --no-pager diff'
 alias gf='git fetch'
 alias gm='git merge'
-alias gl="git --no-pager log --graph --all --pretty=format:'%Cred%h%Creset %Cgreen(%cI) -%C(yellow)%d%Creset %C(bold blue)<%an>%Creset %s' --abbrev-commit"
 alias glo='git --no-pager log --oneline'
 alias gs='git --no-pager status'
 
@@ -34,5 +42,5 @@ alias rdbrb='docker compose exec web rails db:rollback'
 alias rdbmg='docker compose exec web rails db:migrate'
 
 # Shell
-alias zconf='cat ~/dotfiles/zsh/.zshrc'
+alias zconf='bat ~/dotfiles/zsh/.zshrc'
 alias zsource='source ~/.zshrc'

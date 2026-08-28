@@ -19,6 +19,8 @@ p10k configure          # プロンプトのカスタマイズ
 ## 📁 構成
 
 ### アプリケーション設定
+- **Ghostty**: メインターミナル（設定は `ghostty/config`）
+- **cmux**: AIエージェント並走用ターミナル（Ghostty の設定をそのまま読む）
 - **Zsh**: メインシェル（Sheldon + Powerlevel10k）
 - **Git**: グローバル設定とignore
 - **Amethyst**: タイル型ウィンドウマネージャー
@@ -30,6 +32,8 @@ p10k configure          # プロンプトのカスタマイズ
 - **mise**: バージョン管理（asdf後継）
 - **fzf**: ファジーファインダー
 - **ghq**: リポジトリ管理
+- **モダンCLI**: ripgrep / fd / bat / eza / zoxide / lazygit / git-delta
+- **atuin**: シェル履歴の全文検索（同期は無効。履歴は端末内に留まる）
 - **Docker**: コンテナ環境
 - **AWS CLI**: クラウド管理
 
@@ -44,8 +48,12 @@ dotfiles/
 │   ├── aliases.zsh       # エイリアス（Git, Docker等）
 │   ├── functions.zsh     # カスタム関数（ghq+fzf等）
 │   └── .p10k.zsh         # Powerlevel10kプロンプト設定
+├── atuin/
+│   └── config.toml       # シェル履歴の設定（同期は無効）
+├── ghostty/
+│   └── config            # Ghostty設定（cmuxも同じファイルを読む）
 ├── git/
-│   ├── config            # Git設定
+│   ├── config            # Git設定（delta pager 込み）
 │   └── ignore            # グローバルignore
 ├── karabiner/            # キーボード設定
 ├── scripts/
@@ -72,7 +80,7 @@ ga                    # git add
 gc                    # git commit -v
 gs                    # git status
 gd                    # git diff
-gl                    # git log（グラフ表示）
+glo                   # git log --oneline
 gp                    # git push origin
 gph                   # git push origin HEAD
 gpl                   # git pull origin
@@ -90,11 +98,30 @@ ded                   # docker compose exec dev-server
 dew                   # docker compose exec web
 ```
 
+### モダンCLI
+標準コマンドを置き換えています。素の挙動が必要なときは `command cat` のように `command` を前置します。
+
+| コマンド | 実体 | 備考 |
+|---------|------|------|
+| `cat` | bat | シンタックスハイライト付き。パイプ時は自動で素の出力 |
+| `ls` / `ll` / `la` | eza | アイコン・Git差分状態つき |
+| `lt` | eza --tree | 2階層までのツリー表示 |
+| `cd` | zoxide | 実在パスは通常の `cd`、それ以外は訪問履歴から推測して移動 |
+| `cdi` | zoxide | 候補を fzf で選んで移動 |
+| `lg` | lazygit | Git操作のTUI |
+| `fd` | fd | `find` 代替（`.gitignore` を自動尊重） |
+| `rg` | ripgrep | `grep` 代替 |
+
+`git diff` / `git show` / `git log` は delta 経由で表示されます（`--no-pager` 付きのエイリアスは従来どおり素の出力）。
+`fd` と `rg` はオプション体系が `find` / `grep` と異なるため、名前は置き換えていません。
+
 ### ナビゲーション
 ```bash
 Ctrl+G                # ghq + fzf でリポジトリ検索・移動
-Ctrl+R                # fzf でコマンド履歴検索
+Ctrl+R                # atuin でコマンド履歴検索（実行ディレクトリ・終了コードで絞込可）
 Ctrl+T                # fzf でファイル検索
+Alt+C                 # fzf でディレクトリ移動
+↑                     # zsh 標準の履歴（atuin には奪わせていない）
 ```
 
 ### シェル管理
@@ -125,7 +152,12 @@ lscom                 # エイリアス一覧
 
 ### フォント
 以下のNerd Fontが自動インストールされます：
-- MesloLGS Nerd Font
+- MesloLGS Nerd Font（Powerlevel10k / Ghostty で使用）
+- FiraCode Nerd Font（VSCode で使用）
+- Hack Nerd Font
+
+Ghostty の日本語は `BIZ UDGothic` にフォールバックし、`font-feature = -dlig` で
+合字化け（「プログラム」→「プロ㌘」）を無効化しています。
 
 ## ⌨️ キーボードカスタマイズ
 

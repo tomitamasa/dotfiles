@@ -1,6 +1,10 @@
-# Taps
-tap "hashicorp/tap"
-tap "leoafarias/fvm"
+# 実機の状態に同期した宣言ファイル
+# 更新方法: brew bundle dump で書き出したうえで、
+#           下記のカテゴリ分け・コメントを手で戻す
+
+# === Taps ===
+tap "fujiwara/tap"
+tap "manaflow-ai/cmux"
 
 # === CLI (formula) ===
 # シェル・開発基盤
@@ -12,53 +16,65 @@ brew "ghq"
 brew "gh"
 brew "jq"
 brew "mas"
-# クラウド / DB / IaC
+brew "curl"
+brew "gnupg"
+brew "pipx"
+brew "terminal-notifier"
+# モダン CLI（既存 alias と衝突しない範囲で導入。詳細は zsh/aliases.zsh）
+brew "ripgrep"    # grep 代替
+brew "fd"         # find 代替
+brew "bat"        # cat 代替（cat の alias 置換はしない）
+brew "eza"        # ls 代替（ls/ll/la/lt に割当）
+brew "zoxide"     # cd 補助（z / zi。cd 自体は置き換えない）
+brew "lazygit"    # Git TUI（lg に割当）
+brew "git-delta"  # git diff/show/log の pager
+brew "atuin"      # シェル履歴（Ctrl+R。同期は無効）
+brew "shellcheck" # CI と同じ lint をローカルでも回す
+# クラウド / DB
+brew "amazon-ecs-cli"
 brew "awscli"
-brew "cloud-sql-proxy"
-brew "flyctl"
-brew "hashicorp/tap/terraform"
-brew "libpq"
-brew "mysql"
-# モバイル開発
-brew "cocoapods"
-brew "leoafarias/fvm/fvm"
-# メディア / 制作
-brew "ffmpeg"
+brew "mysql", link: false
+brew "mysql-client@8.4", link: true
+# AI / メディア
+brew "ollama", restart_service: :changed
 brew "poppler"
-brew "librsvg"
-brew "dvdauthor"
-brew "cdrtools"
 
 # === GUI (cask) ===
-cask "amethyst"
+# ターミナル
+cask "ghostty"    # メインターミナル。設定は ghostty/config
+cask "cmux"       # AI エージェント並走用。ghostty/config をそのまま読む
+# 開発
+cask "claude-code"
+cask "codex"
 cask "docker-desktop"
+cask "visual-studio-code"
+cask "sequel-ace"
 cask "google-chrome"
+# 入力・ウィンドウ・ユーティリティ
+cask "amethyst"
+cask "bettertouchtool"
 cask "karabiner-elements"
+cask "macskk"
+cask "clipy"
 cask "raycast"
 cask "scroll-reverser"
-cask "slack"
 cask "obsidian"
-cask "inkscape"
-cask "visual-studio-code"
-cask "android-studio"
-cask "android-commandlinetools"
-cask "flutter"
-cask "gcloud-cli"
-# Nerd Fonts for Powerlevel10k prompt
+cask "slack"
+# Nerd Fonts（Powerlevel10k / Ghostty / VSCode 用）
 cask "font-meslo-lg-nerd-font"
+cask "font-fira-code-nerd-font"
+cask "font-hack-nerd-font"
 
 # === Mac App Store ===
 mas "Xcode", id: 497799835
-mas "Developer", id: 640199958
 mas "Keynote", id: 409183694
 mas "Numbers", id: 409201541
 mas "Pages", id: 409203825
 mas "iMovie", id: 408981434
 mas "GarageBand", id: 682658836
 mas "Kindle", id: 302584613
-mas "LINE", id: 539883307
-mas "SafeInCloud 2", id: 883070818
-mas "Windows App", id: 1295203466
+mas "Monosnap", id: 540348655
+mas "Safe", id: 883070818
 
 # === VSCode 拡張 ===
 vscode "anthropic.claude-code"
@@ -66,6 +82,7 @@ vscode "github.vscode-pull-request-github"
 vscode "eamodio.gitlens"
 vscode "ms-ceintl.vscode-language-pack-ja"
 vscode "ms-vscode-remote.remote-containers"
+vscode "ms-azuretools.vscode-containers"
 vscode "ms-vsliveshare.vsliveshare"
 vscode "ms-python.python"
 vscode "ms-python.vscode-pylance"
@@ -87,3 +104,9 @@ vscode "ryu1kn.partial-diff"
 vscode "oderwat.indent-rainbow"
 vscode "streetsidesoftware.code-spell-checker"
 vscode "teabyii.ayu"
+
+# === その他ランタイム ===
+uv "openhands"
+npm "@playwright/cli"
+npm "chrome-devtools-mcp"
+npm "corepack"

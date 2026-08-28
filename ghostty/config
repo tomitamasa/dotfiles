@@ -1,14 +1,19 @@
 # Ghostty — Claude Code を複数リポジトリ × 複数セッションで回すための設定
 #
-# 検証: Ghostty 1.3.1。すべてのキーを `ghostty +show-config --default` で実在確認し、
-#       `ghostty +validate-config` を通している。
+# 実体は ~/dotfiles/ghostty/config（~/.config/ghostty/config へ symlink）。
+# cmux も同じファイルを読むため、設定はここに一本化する。
+# 検証: Ghostty 1.3.1。`ghostty +validate-config` を通している。
 # 参考: https://ghostty.org/docs/config
 
 # ── 見た目 ────────────────────────────────────────────────────────────────
 # p10k を nerdfont-v3 で設定しているのでアイコン付きの Nerd Font が要る
 font-family = MesloLGS Nerd Font Mono
+# 日本語のフォールバック
+font-family = BIZ UDGothic
 font-size = 13
-theme = Catppuccin Mocha
+# 「プログラム」が「プロ㌘」等に化ける合字を無効化
+font-feature = -dlig
+theme = Ayu Mirage
 window-padding-x = 8
 window-padding-y = 6
 
@@ -43,3 +48,10 @@ quick-terminal-position = top
 # ── その他 ────────────────────────────────────────────────────────────────
 # Option を Alt として送る (単語単位のカーソル移動などに必要)
 macos-option-as-alt = true
+
+# 長いビルドログ・テスト出力を遡れるようにする
+scrollback-limit = 100000
+copy-on-select = clipboard
+
+# Shift+Enter とデスクトップ通知は Ghostty では設定不要で動く
+# (Claude Code 公式が無設定対応端末として明記)
