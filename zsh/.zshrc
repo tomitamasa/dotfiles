@@ -46,6 +46,17 @@ export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 # Claude Code
 export PATH="$HOME/.local/bin:$PATH"
 
+# エディタ。VSCode があれば使い、無ければ vi にフォールバックする。
+# -w (--wait) は必須: 呼び出し元がファイルを閉じるまで待つ必要がある。
+# git commit のエディタ、Claude Code の Ctrl+G (プロンプトを外部エディタで編集)、
+# transcript モードの v (会話をエディタに吐く) などがこれを見る。
+if command -v code &>/dev/null; then
+  export EDITOR="code -w"
+else
+  export EDITOR="vi"
+fi
+export VISUAL="$EDITOR"
+
 # mise (asdf successor, shims mode to avoid p10k precmd conflict)
 if command -v mise &>/dev/null; then
   eval "$(mise activate zsh --shims)"
