@@ -1,26 +1,57 @@
-# Ghostty 設定
-# 実体は ~/dotfiles/ghostty/config（~/.config/ghostty/config へ symlink）
-# cmux も同じファイルを読む
+# Ghostty — Claude Code を複数リポジトリ × 複数セッションで回すための設定
+#
+# 実体は ~/dotfiles/ghostty/config（~/.config/ghostty/config へ symlink）。
+# cmux も同じファイルを読むため、設定はここに一本化する。
+# 検証: Ghostty 1.3.1。`ghostty +validate-config` を通している。
+# 参考: https://ghostty.org/docs/config
 
-# --- フォント ---
-# Powerlevel10k 公式推奨の MesloLGS + 日本語フォールバック
+# ── 見た目 ────────────────────────────────────────────────────────────────
+# p10k を nerdfont-v3 で設定しているのでアイコン付きの Nerd Font が要る
 font-family = MesloLGS Nerd Font Mono
+# 日本語のフォールバック
 font-family = BIZ UDGothic
-font-size = 14
+font-size = 13
 # 「プログラム」が「プロ㌘」等に化ける合字を無効化
 font-feature = -dlig
+theme = Catppuccin Mocha
+window-padding-x = 8
+window-padding-y = 6
 
-# --- 見た目 ---
-theme = Ayu Mirage
-window-padding-x = 10
-window-padding-y = 10
-macos-titlebar-style = tabs
+# ── 並列運用 ──────────────────────────────────────────────────────────────
+# 分割の既定キーバインド (設定不要・忘れたとき用のメモ):
+#   Cmd+D            右に分割
+#   Cmd+Shift+D      下に分割
+#   Cmd+[ / Cmd+]    分割間を移動
+#   Cmd+Shift+Enter  今の分割をズーム (一時的に全画面)
+#   Cmd+Ctrl+=       分割サイズを均等化
 
-# --- 挙動 ---
-# 再起動時にウィンドウ・タブを復元
+# フォーカスしていない分割を暗くする。セッションを並べたとき
+# 「いまどれを見ているか」が一目で分かる (既定 0.7 より強め)
+unfocused-split-opacity = 0.55
+
+# 新しい分割・タブが今の作業ディレクトリを引き継ぐ。
+# worktree の中で Cmd+D すればそのまま同じ worktree で開く
+window-inherit-working-directory = true
+
+# 終了時のウィンドウ/タブ/分割の構成を復元する。
+# 並列セッション用の「作業卓」を毎回組み直さずに済む
 window-save-state = always
-copy-on-select = clipboard
+
+# Cmd+Option+` で画面上部からドロップダウンする一時ターミナル。
+# 走っているセッションのレイアウトを崩さずに
+# `cca` (claude agents) でバックグラウンドの様子を覗くのに使う。
+# global: はシステム全体で奪うので、macOS の Cmd+` (同一アプリのウィンドウ切替) や
+# VS Code の Ctrl+` (統合ターミナル) を潰さない組み合わせにしてある
+keybind = global:super+alt+backquote=toggle_quick_terminal
+quick-terminal-position = top
+
+# ── その他 ────────────────────────────────────────────────────────────────
+# Option を Alt として送る (単語単位のカーソル移動などに必要)
+macos-option-as-alt = true
+
+# 長いビルドログ・テスト出力を遡れるようにする
 scrollback-limit = 100000
+copy-on-select = clipboard
 
 # Shift+Enter とデスクトップ通知は Ghostty では設定不要で動く
-# （Claude Code 公式が無設定対応端末として明記）
+# (Claude Code 公式が無設定対応端末として明記)
