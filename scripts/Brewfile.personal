@@ -1,0 +1,36 @@
+# 私用端末でのみ入れるもの
+#
+# 有効化: echo personal > ~/.dotfiles-profile
+# 共通で入れるものは scripts/Brewfile 側にある。
+# install.sh は 共通 → プロファイル分 の順に brew bundle を回す。
+
+# === Taps ===
+tap "hashicorp/tap"
+tap "leoafarias/fvm"
+
+# === CLI (formula) ===
+# クラウド / IaC
+brew "hashicorp/tap/terraform"
+brew "flyctl"
+brew "cloud-sql-proxy"
+brew "libpq"
+# モバイル開発
+brew "cocoapods"
+brew "leoafarias/fvm/fvm"
+# メディア / 制作
+brew "ffmpeg"
+brew "librsvg"
+brew "dvdauthor"
+brew "cdrtools"
+
+# === GUI (cask) ===
+cask "flutter"
+cask "android-studio"
+cask "android-commandlinetools"
+cask "gcloud-cli"
+cask "inkscape"
+
+# === Mac App Store ===
+mas "Developer", id: 640199958
+mas "LINE", id: 539883307
+mas "Windows App", id: 1295203466

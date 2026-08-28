@@ -10,6 +10,11 @@ cd ~/dotfiles
 ./scripts/install.sh
 ```
 
+私用端末なら、インストール前にプロファイルを指定します（業務端末には不要なものを分けるため）:
+```bash
+echo personal > ~/.dotfiles-profile
+```
+
 インストール後:
 ```bash
 exec zsh                # シェル再起動
@@ -58,7 +63,8 @@ dotfiles/
 ├── karabiner/            # キーボード設定
 ├── scripts/
 │   ├── install.sh        # メインインストーラー
-│   ├── Brewfile          # パッケージ定義
+│   ├── Brewfile          # パッケージ定義（全端末共通）
+│   ├── Brewfile.personal # 私用端末でのみ入れるもの
 │   └── lib/
 │       ├── brew.sh       # Homebrew管理
 │       ├── symlinks.sh   # シンボリックリンク作成
@@ -214,10 +220,27 @@ exec zsh                         # 反映
 ```
 
 ### Brewパッケージを追加
+
+全端末で使うものは `scripts/Brewfile` に、私用端末だけで使うものは `scripts/Brewfile.personal` に書きます。
+
 ```bash
-# scripts/Brewfile にパッケージを追加
 brew bundle install --file=scripts/Brewfile
+brew bundle install --file=scripts/Brewfile.personal   # 私用端末のみ
 ```
+
+### 端末プロファイル
+
+`install.sh` は 共通の `Brewfile` → `Brewfile.<プロファイル名>` の順に `brew bundle` を回します。
+プロファイルは次の優先順で決まり、未設定なら共通分だけを入れます。
+
+1. 環境変数 `DOTFILES_PROFILE`
+2. `~/.dotfiles-profile` の1行目（Git管理外。`.secrets` と同じくローカルにだけ置く）
+
+```bash
+echo personal > ~/.dotfiles-profile   # 私用端末
+```
+
+新しい区分を増やしたいときは `scripts/Brewfile.<名前>` を置き、`~/.dotfiles-profile` にその名前を書きます（例: `work`）。
 
 ## 🏗️ アーキテクチャ
 
