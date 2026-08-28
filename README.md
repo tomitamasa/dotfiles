@@ -29,7 +29,7 @@ p10k configure          # プロンプトのカスタマイズ
 - **Zsh**: メインシェル（Sheldon + Powerlevel10k）
 - **Git**: グローバル設定とignore
 - **Amethyst**: タイル型ウィンドウマネージャー
-- **Karabiner**: キーボードカスタマイズ
+- **Karabiner**: キーボードカスタマイズ（実際に効いている `karabiner.json` ごと管理）
 - **VSCode**: 拡張機能とワークスペース設定
 
 ### 開発ツール
@@ -60,7 +60,9 @@ dotfiles/
 ├── git/
 │   ├── config            # Git設定（delta pager 込み）
 │   └── ignore            # グローバルignore
-├── karabiner/            # キーボード設定
+├── karabiner/            # ~/.config/karabiner をディレクトリごとリンク
+│   ├── karabiner.json    # 実際に効いている設定（Karabinerが直接書き込む）
+│   └── assets/           # インポート用の複雑なルール定義
 ├── scripts/
 │   ├── install.sh        # メインインストーラー
 │   ├── Brewfile          # パッケージ定義（全端末共通）
@@ -168,15 +170,23 @@ Ghostty の日本語は `BIZ UDGothic` にフォールバックし、`font-featu
 ## ⌨️ キーボードカスタマイズ
 
 ### Karabiner設定
-- **Caps Lock** → **Right Option**（手動設定が必要）
-- **Home/End**キーのmacOS対応
-- **Vim風**ナビゲーション
-- **アプリ切り替え**最適化
+`install.sh` を流すだけで、下記がすべて適用されます。GUI での手動インポートは不要です。
 
-### おすすめ設定手順
-1. Karabiner-Elementsを起動
-2. Simple Modifications → Add item
-3. From: `caps_lock` → To: `right_option`
+- **Caps Lock** → **Right Option**
+- **左Command** ⇄ **左Control** の入れ替え
+- **Home/End** キーのmacOS対応
+- **Vim風**ナビゲーション、カーソル移動、アプリ切り替え
+
+`~/.config/karabiner` をディレクトリごとリンクしています。`karabiner.json` を単体でリンクすると
+Karabiner-Elements が保存のたびにリンクを消してファイルで置き換えるため、
+[公式ドキュメント](https://karabiner-elements.pqrs.org/docs/manual/misc/configuration-file-path/)の指示どおりディレクトリ単位にしています。
+
+GUI で設定を変えると `karabiner/karabiner.json` に差分が出るので、そのままコミットすれば
+別のマシンにも反映されます。設定ディレクトリを手で移した場合は、下記でサービスを再起動します。
+
+```bash
+launchctl kickstart -k "gui/$(id -u)/org.pqrs.service.agent.karabiner_console_user_server"
+```
 
 ## 🔄 更新
 
@@ -245,8 +255,9 @@ echo personal > ~/.dotfiles-profile   # 私用端末
 ## 🏗️ アーキテクチャ
 
 ### 冪等性の保証
-- 何度実行しても同じ状態
-- 既存ファイルのバックアップ
+- 何度実行しても同じ状態。CI が `create_dotfiles_symlinks` を繰り返し実行し、退避ファイルが増えないことを検査します
+- 既存の実ファイル・実ディレクトリは `.backup` に退避（退避先が埋まっていれば日時を付与するため、入れ子にならない）
+- 別の場所を指すシンボリックリンクは退避せず張り替え
 - 重複インストールの回避
 
 ### クロスプラットフォーム対応
