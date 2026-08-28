@@ -1,0 +1,26 @@
+# Ghostty 設定
+# 実体は ~/dotfiles/ghostty/config（~/.config/ghostty/config へ symlink）
+# cmux も同じファイルを読む
+
+# --- フォント ---
+# Powerlevel10k 公式推奨の MesloLGS + 日本語フォールバック
+font-family = MesloLGS Nerd Font Mono
+font-family = BIZ UDGothic
+font-size = 14
+# 「プログラム」が「プロ㌘」等に化ける合字を無効化
+font-feature = -dlig
+
+# --- 見た目 ---
+theme = Ayu Mirage
+window-padding-x = 10
+window-padding-y = 10
+macos-titlebar-style = tabs
+
+# --- 挙動 ---
+# 再起動時にウィンドウ・タブを復元
+window-save-state = always
+copy-on-select = clipboard
+scrollback-limit = 100000
+
+# Shift+Enter とデスクトップ通知は Ghostty では設定不要で動く
+# （Claude Code 公式が無設定対応端末として明記）

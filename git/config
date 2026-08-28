@@ -1,5 +1,8 @@
 [core]
 	excludesfile = ~/.gitignore_global
+	; delta: git diff/show/log の表示を見やすくする
+	; 既存の git alias は全て --no-pager のため影響なし
+	pager = delta
 [user]
 	name = tomitamasa
 	email = 41310325+tomitamasa@users.noreply.github.com
@@ -9,3 +12,10 @@
 	rebase = false
 [ghq]
 	root = ~/src
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	line-numbers = true
+[diff]
+	colorMoved = default

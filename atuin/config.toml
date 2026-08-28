@@ -1,0 +1,17 @@
+# atuin 設定
+# 実体は ~/dotfiles/atuin/config.toml（~/.config/atuin/config.toml へ symlink）
+
+# 同期は使わない。履歴は端末内の SQLite だけに保存し、外部へ送らない
+auto_sync = false
+update_check = false
+
+# 検索は全履歴を対象にする
+filter_mode = "global"
+search_mode = "fuzzy"
+
+# Enter は選んだコマンドを入力行に戻すだけ（誤爆で即実行させない）
+enter_accept = false
+
+# プロンプト直下にインライン表示
+style = "compact"
+inline_height = 20
