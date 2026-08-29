@@ -31,6 +31,8 @@ source "$SCRIPT_DIR/lib/symlinks.sh"
 source "$SCRIPT_DIR/lib/zsh.sh"
 # shellcheck source=lib/macos.sh
 source "$SCRIPT_DIR/lib/macos.sh"
+# shellcheck source=lib/defaults.sh
+source "$SCRIPT_DIR/lib/defaults.sh"
 
 # Install Homebrew
 install_homebrew
@@ -49,6 +51,9 @@ install_zsh_plugins
 
 # Configure macOS system preferences
 configure_macos
+
+# Import GUI app settings (AltTab, Amethyst)
+import_app_defaults "$DOTFILES_DIR"
 
 echo ""
 echo "🎉 Dotfiles installation completed successfully!"

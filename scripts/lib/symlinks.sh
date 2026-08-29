@@ -60,6 +60,13 @@ create_dotfiles_symlinks() {
   # Ghostty（cmux も同じ設定ファイルを読む）
   create_symlink "$dotfiles_dir/ghostty/config" "$HOME/.config/ghostty/config"
 
+  # mise（ランタイムのバージョン固定）
+  create_symlink "$dotfiles_dir/mise/config.toml" "$HOME/.config/mise/config.toml"
+
+  # VS Code のユーザー設定（拡張は Brewfile 側）
+  create_symlink "$dotfiles_dir/vscode/settings.json" "$HOME/Library/Application Support/Code/User/settings.json"
+  create_symlink "$dotfiles_dir/vscode/keybindings.json" "$HOME/Library/Application Support/Code/User/keybindings.json"
+
   # atuin（シェル履歴）
   create_symlink "$dotfiles_dir/atuin/config.toml" "$HOME/.config/atuin/config.toml"
 

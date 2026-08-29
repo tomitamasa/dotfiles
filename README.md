@@ -55,6 +55,13 @@ dotfiles/
 │   └── .p10k.zsh         # Powerlevel10kプロンプト設定
 ├── atuin/
 │   └── config.toml       # シェル履歴の設定（同期は無効）
+├── mise/
+│   └── config.toml       # ランタイムのバージョン固定
+├── vscode/
+│   ├── settings.json     # VS Code のユーザー設定
+│   └── keybindings.json  # 同キーバインド
+├── macos/
+│   └── *.plist           # GUIアプリの設定（AltTab・Amethyst）
 ├── ghostty/
 │   └── config            # Ghostty設定（cmuxも同じファイルを読む）
 ├── git/
@@ -209,13 +216,28 @@ launchctl kickstart -k "gui/$(id -u)/org.pqrs.service.agent.karabiner_console_us
 | 対象 | 見つけたいもの |
 |------|--------------|
 | shellcheck / `zsh -n` | シェルスクリプトと zsh 設定の構文エラー |
-| JSON / TOML / YAML | 壊れた設定ファイル（配ると新しいマシンでキーボードやシェルが動かない） |
+| JSON / TOML / YAML / plist | 壊れた設定ファイル（配ると新しいマシンでキーボードやシェルが動かない） |
 | Karabiner の構造 | JSON としては読めるが manipulators が欠けている等、リマップが効かない状態 |
 | 秘密情報・個人情報 | 絶対パスのハードコード、トークン・秘密鍵、意図しないメールアドレス |
 
 このリポジトリは public です。`brew bundle dump` のように実機の状態を機械的に吐いた
 ファイルは、絶対パスや社内固有のパッケージ名をそのまま素通しします。目視では滑るので
 機械で見ます。
+
+## 🖥 GUIアプリの設定
+
+設定画面でしか変えられないものは `macos/*.plist` に置き、`install.sh` が
+`defaults import` で流し込みます。対象は AltTab（ウィンドウ切り替え）と
+Amethyst（ウィンドウ配置のキーバインド）です。
+
+設定を変えたら書き出し直します。
+
+```bash
+./scripts/export-app-defaults.sh
+```
+
+インストール識別子・セッション履歴・ウィンドウ座標といった、他のマシンで意味を
+持たない値や公開したくない値は書き出し時に除外されます。
 
 ## 🔄 更新
 

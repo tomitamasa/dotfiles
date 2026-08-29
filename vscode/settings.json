@@ -1,0 +1,99 @@
+{
+  "git.confirmSync": false,
+  "git.suggestSmartCommit": false,
+  "git.autofetch": true,
+  "editor.fontFamily": "'FiraCode Nerd Font','MesloLGL Nerd Font','Hack Nerd Font'",
+  "editor.tabSize": 2,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "[markdown]": {
+    "editor.unicodeHighlight.ambiguousCharacters": false,
+    "editor.unicodeHighlight.invisibleCharacters": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "comments": "off",
+      "strings": "off",
+      "other": "off"
+    },
+    "cSpell.fixSpellingWithRenameProvider": true,
+    "cSpell.advanced.feature.useReferenceProviderWithRename": true,
+    "cSpell.advanced.feature.useReferenceProviderRemove": "/^#+\\s/"
+  },
+  "terminal.integrated.macOptionIsMeta": true,
+  "terminal.integrated.scrollback": 10000,
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "github.copilot.enable": {
+    "*": true,
+    "plaintext": false,
+    "markdown": false,
+    "scminput": false,
+    "ruby": true
+  },
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "update.showReleaseNotes": false,
+  "githubPullRequests.pullBranch": "never",
+  "githubPullRequests.createOnPublishBranch": "never",
+  "typescript.updateImportsOnFileMove.enabled": "never",
+  "workbench.colorTheme": "Ayu Mirage",
+  "settingsSync.ignoredExtensions": [
+    "vue.volar"
+  ],
+  "telemetry.telemetryLevel": "off",
+  "gitlens.ai.vscode.model": "copilot:gpt-4.1",
+  "claudeCode.preferredLocation": "panel",
+  "biome.suggestInstallingGlobally": false,
+  "claudeCode.selectedModel": "default",
+  "chat.tools.terminal.autoApprove": {
+    "docker compose": true
+  },
+  "chat.agent.maxRequests": 1000,
+  "markdown-pdf.outputDirectory": "~/Downloads",
+  "markdown-pdf.mermaidServer": "https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js",
+  "[csv]": {
+    "editor.inlayHints.maximumLength": 0
+  },
+  "chat.mcp.gallery.enabled": true,
+  "chat.mcp.serverSampling": {},
+  "claudeCode.useCtrlEnterToSend": true,
+  "json.schemaDownload.trustedDomains": {
+    "https://schemastore.azurewebsites.net/": true,
+    "https://raw.githubusercontent.com/": true,
+    "https://www.schemastore.org/": true,
+    "https://json.schemastore.org/": true,
+    "https://json-schema.org/": true,
+    "https://biomejs.dev": true
+  },
+  "terminal.integrated.profiles.osx": {
+    "bash": {
+      "path": "bash",
+      "args": [
+        "-l"
+      ],
+      "icon": "terminal-bash"
+    },
+    "zsh": {
+      "path": "/bin/zsh",
+      "args": [
+        "-l"
+      ]
+    },
+    "fish": {
+      "path": "fish",
+      "args": [
+        "-l"
+      ]
+    },
+    "tmux": {
+      "path": "tmux",
+      "icon": "terminal-tmux"
+    },
+    "pwsh": {
+      "path": "pwsh",
+      "icon": "terminal-powershell"
+    }
+  },
+  "extensions.ignoreRecommendations": true,
+"scm.repositories.selectionMode": "single",
+"terminal.integrated.mouseWheelScrollSensitivity": 3,
+"terminal.integrated.gpuAcceleration": "off"
+}

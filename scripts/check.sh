@@ -79,6 +79,16 @@ for f in .amethyst.yml .github/workflows/*.yaml .github/workflows/*.yml; do
   fi
 done
 
+section "plist"
+for f in macos/*.plist; do
+  [ -f "$f" ] || continue
+  if plutil -lint "$f" >/dev/null 2>&1; then
+    ok "$f"
+  else
+    fail "$f が plist として壊れている"
+  fi
+done
+
 # ------------------------------------------------------------- Karabiner
 # JSON として読めても、構造が壊れていればキーリマップは効かない。
 
