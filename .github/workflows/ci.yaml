@@ -5,27 +5,52 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  lint-and-test:
-    name: Lint & Test
+  # 静的検査。macOS が要らないものはこちらに寄せる（速いうえ ubuntu は分単位の
+  # 課金倍率が macOS より低い）。中身は scripts/check.sh にあり、手元でも
+  # 同じものを `./scripts/check.sh` で回せる。
+  static:
+    name: 静的検査
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install checkers
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends shellcheck zsh
+
+      - name: Run static checks
+        run: ./scripts/check.sh
+
+  # 実際に走らせて確かめるもの。install.sh が新しいマシンで通るかどうかが主眼。
+  install:
+    name: インストール検証 (macOS)
     runs-on: macos-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
       - name: Install dependencies
-        run: brew install shellcheck sheldon fzf mise ghq
+        run: brew install sheldon fzf mise ghq
 
-      - name: Shellcheck
-        run: find scripts -name '*.sh' -print0 | xargs -0 shellcheck -x
+      # Brewfile のタイポや、rename・削除されたパッケージを検出する。
+      # `brew bundle list` は名前を並べるだけで実在を見ないため使えない。
+      - name: Verify Brewfile packages exist
+        run: ./scripts/check-brewfile.sh
 
       - name: Verify symlink creation
         run: |
           source scripts/lib/symlinks.sh
           create_dotfiles_symlinks "$(pwd)"
 
-          # Verify symlinks exist and point to correct targets
           readlink ~/.zshrc | grep -q "zsh/.zshrc"
           readlink ~/.zprofile | grep -q "zsh/.zprofile"
           readlink ~/.gitconfig | grep -q "git/config"
@@ -33,7 +58,10 @@ jobs:
           readlink ~/.config/ghostty/config | grep -q "ghostty/config"
           readlink ~/.config/atuin/config.toml | grep -q "atuin/config.toml"
           readlink ~/.config/karabiner | grep -q "/karabiner$"
+
+          # リンク越しに中身へ到達できること（リンクが張れただけでは足りない）
           test -f ~/.config/karabiner/karabiner.json
+          test -f ~/.config/karabiner/assets/complex_modifications/VimLike.json
           echo "All symlinks OK"
 
       - name: Verify symlink creation is idempotent
@@ -57,14 +85,12 @@ jobs:
           test -f ~/.config/karabiner/karabiner.json
           echo "Idempotent OK"
 
-      - name: Verify global gitignore
+      - name: Verify global gitignore protects secrets
         run: |
-          # core.excludesfile must be set
           git config --global core.excludesfile | grep -q "gitignore_global" \
             || { echo "FAIL: core.excludesfile not set"; exit 1; }
           echo "OK: core.excludesfile -> $(git config --global core.excludesfile)"
 
-          # Sensitive files must be ignored in any repo
           cd "$(mktemp -d)"
           git init -q
           touch .env .secrets test.pem normal.txt
@@ -77,57 +103,41 @@ jobs:
           done
           echo "Global gitignore OK"
 
-      - name: Verify macOS defaults script
+      # 関数が定義されていることではなく、実際に適用できることを見る。
+      # set -e で走らせるので、defaults の書式ミスがあればここで落ちる。
+      - name: Verify macOS defaults apply
         run: |
-          source scripts/lib/macos.sh
-          type configure_macos
+          bash -euo pipefail -c 'source scripts/lib/macos.sh; configure_macos'
+
+          # 書けたことを読み戻して確認する
+          test "$(defaults read com.apple.dock tilesize)" = "26"
+          test "$(defaults read com.apple.dock orientation)" = "right"
+          test "$(defaults read NSGlobalDomain AppleShowAllExtensions)" = "1"
+          echo "macOS defaults OK"
 
       - name: Verify Sheldon plugins
         run: |
           sheldon lock --update
+          test -f ~/.local/share/sheldon/repos/github.com/romkatv/powerlevel10k/powerlevel10k.zsh-theme \
+            || { echo "FAIL: powerlevel10k not fetched"; exit 1; }
           echo "Sheldon plugins OK"
 
-      - name: Verify zsh config loads
-        run: |
-          zsh -c '
-            source '"$(pwd)"'/zsh/aliases.zsh
-            alias ga | grep -q "git add"
-            alias gs | grep -q "git.*status"
-            alias dcom | grep -q "docker compose"
-
-            source '"$(pwd)"'/zsh/functions.zsh
-            whence -f ghq_fzf_repo > /dev/null
-            echo "Zsh config OK"
-          '
-
-      - name: Verify .zshrc loads and tool paths
+      - name: Verify .zshrc loads and tools resolve
         run: |
           DOTFILES_ZSH="$(pwd)/zsh" zsh -c '
             source '"$(pwd)"'/zsh/.zshrc
 
-            # mise should be loaded
-            whence -p mise > /dev/null || { echo "FAIL: mise not found"; exit 1; }
-            echo "OK: mise -> $(whence -p mise)"
+            for tool in mise fzf sheldon ghq; do
+              whence -p $tool > /dev/null || { echo "FAIL: $tool not found"; exit 1; }
+            done
 
-            # fzf should be loaded
-            whence -p fzf > /dev/null || { echo "FAIL: fzf not found"; exit 1; }
-            echo "OK: fzf -> $(whence -p fzf)"
-
-            # fzf key-bindings should be loaded (Ctrl+R widget)
+            # fzf のキーバインドが読み込まれていること
             zle -la | grep -q fzf || { echo "FAIL: fzf key-bindings not loaded"; exit 1; }
-            echo "OK: fzf key-bindings loaded"
 
-            # sheldon should be loaded
-            whence -p sheldon > /dev/null || { echo "FAIL: sheldon not found"; exit 1; }
-            echo "OK: sheldon -> $(whence -p sheldon)"
-
-            # ghq should be loaded
-            whence -p ghq > /dev/null || { echo "FAIL: ghq not found"; exit 1; }
-            echo "OK: ghq -> $(whence -p ghq)"
-
-            # Ctrl+G binding should exist
+            # 自前の関数・エイリアスが生きていること
             bindkey "^g" | grep -q ghq_fzf_repo || { echo "FAIL: Ctrl+G binding not set"; exit 1; }
-            echo "OK: Ctrl+G -> ghq_fzf_repo"
+            alias ga | grep -q "git add" || { echo "FAIL: git aliases not loaded"; exit 1; }
+            alias ls | grep -q eza      || { echo "FAIL: eza alias not loaded"; exit 1; }
 
-            echo "All tool paths OK"
+            echo "zshrc OK"
           '
