@@ -55,7 +55,7 @@ cask "amethyst"
 cask "bettertouchtool"
 cask "karabiner-elements"
 cask "macskk"
-cask "clipy"
+cask "alt-tab"    # ウィンドウ切り替えにライブサムネイルを出す
 cask "raycast"
 cask "scroll-reverser"
 cask "obsidian"
