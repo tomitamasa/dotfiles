@@ -41,7 +41,10 @@ install_homebrew
 create_dotfiles_symlinks "$DOTFILES_DIR"
 
 # Install packages from Brewfile
-install_packages "$DOTFILES_DIR"
+# set -e で即座に落とさず、symlink 済みの環境を最後まで整えたうえで
+# 最後に失敗を報告する（パッケージが欠けても他の設定は使えるため）。
+INSTALL_STATUS=0
+install_packages "$DOTFILES_DIR" || INSTALL_STATUS=1
 
 # Install additional fonts if needed
 install_additional_fonts
@@ -56,7 +59,13 @@ configure_macos
 import_app_defaults "$DOTFILES_DIR"
 
 echo ""
-echo "🎉 Dotfiles installation completed successfully!"
+if [ "$INSTALL_STATUS" -ne 0 ]; then
+  echo "⚠️  一部のパッケージが入りませんでした（上のログを確認してください）"
+  echo "   App Store 経由（mas）のアプリは sudo が必要で、install.sh からは入りません。"
+  echo "   その場合は App Store から手で入れてください。"
+  echo ""
+fi
+echo "🎉 Dotfiles installation completed!"
 echo ""
 echo "📝 Next steps:"
 echo "  1. Restart your terminal or run: exec zsh"
@@ -64,3 +73,5 @@ echo "  2. Run 'p10k configure' to customize your prompt"
 echo "  3. Customize aliases in ~/dotfiles/zsh/aliases.zsh"
 echo ""
 echo "✨ Enjoy your new development environment!"
+
+exit "$INSTALL_STATUS"

@@ -57,9 +57,29 @@ resolve_profile() {
   esac
 }
 
+# Trust the third-party taps a Brewfile declares.
+# brew はサードパーティ tap を既定で信頼せず、信頼していない tap の formula が
+# 1 つでもあると brew bundle 全体が失敗する。tap を Brewfile に書いたのは自分
+# なので、ここで信頼するのは Brewfile を書いた時点の判断となにも変わらない。
+trust_brewfile_taps() {
+  local file="$1" tap
+
+  # brew trust を持たない版では何もしない（その版は tap を信頼扱いしない）
+  brew trust --help &>/dev/null || return 0
+
+  while read -r tap; do
+    [ -n "$tap" ] || continue
+    if ! brew trust "$tap" &>/dev/null; then
+      echo "⚠️  tap を信頼できませんでした: $tap"
+    fi
+  done < <(sed -nE 's/^[[:space:]]*tap[[:space:]]+"([^"]+)".*/\1/p' "$file")
+}
+
 # Install packages from a single Brewfile (with retry for network issues)
 install_brewfile() {
   local file="$1"
+
+  trust_brewfile_taps "$file"
 
   for attempt in 1 2 3; do
     echo "📦 Installing packages from $file... (attempt $attempt/3)"
@@ -72,6 +92,7 @@ install_brewfile() {
     if [ "$attempt" -eq 3 ]; then
       echo "⚠️  $file: some packages failed to install after 3 attempts"
       echo "🔧 You can run 'brew bundle install --file=$file' manually later"
+      return 1
     else
       echo "⚠️  Some packages failed, retrying in 5 seconds..."
       sleep 5
@@ -80,29 +101,33 @@ install_brewfile() {
 }
 
 # Install packages from the shared Brewfile plus the profile overlay
+# 失敗は握り潰さず呼び出し元へ返す。パッケージが入っていないのに
+# 「インストール完了」と出ると、壊れた端末を正常だと思い込むことになる。
 install_packages() {
   local dotfiles_dir="$1"
-  local profile overlay
+  local profile overlay status=0
 
   cd "$dotfiles_dir" || return 1
 
-  install_brewfile "scripts/Brewfile"
+  install_brewfile "scripts/Brewfile" || status=1
 
   profile=$(resolve_profile)
   if [ -z "$profile" ]; then
     echo "ℹ️  プロファイル未設定のため共通分のみ入れました"
     echo "   私用端末なら: echo personal > ~/.dotfiles-profile"
-    return 0
+    return "$status"
   fi
 
   overlay="scripts/Brewfile.$profile"
   if [ ! -f "$overlay" ]; then
     echo "⚠️  プロファイル '$profile' 用の $overlay が無いため共通分のみ入れました"
-    return 0
+    return "$status"
   fi
 
   echo "📦 プロファイル: $profile"
-  install_brewfile "$overlay"
+  install_brewfile "$overlay" || status=1
+
+  return "$status"
 }
 
 # Install additional fonts if needed (fallback for older systems)
