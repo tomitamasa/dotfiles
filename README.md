@@ -92,28 +92,15 @@ dotfiles/
 
 ## 🔧 主要コマンド
 
-### Git
-```bash
-ga                    # git add
-gc                    # git commit -v
-gs                    # git status
-gd                    # git diff
-glo                   # git log --oneline
-gp                    # git push origin
-gph                   # git push origin HEAD
-gpl                   # git pull origin
-gsw                   # git switch
-gswc                  # git switch -c
-gb                    # git branch --all
-```
+### Git / Docker
+シェル履歴 7169 件（2023-07 以降）で実際に使われていたものだけを残しています。
 
-### Docker
 ```bash
-dcom                  # docker compose
-du                    # docker compose up
-dd                    # docker compose down
-ded                   # docker compose exec dev-server
-dew                   # docker compose exec web
+gsw                   # git switch
+gsm                   # git switch master
+gph                   # git push origin HEAD
+du                    # docker compose up（標準の du を隠すので注意）
+yarn                  # docker compose exec dev-server yarn
 ```
 
 ### モダンCLI
@@ -142,14 +129,6 @@ Alt+C                 # fzf でディレクトリ移動
 ↑                     # zsh 標準の履歴（atuin には奪わせていない）
 ```
 
-### シェル管理
-```bash
-acom                  # .zshrc を編集
-zsource               # .zshrc を再読み込み
-zconf                 # .zshrc を表示
-scom <keyword>        # エイリアスを検索
-lscom                 # エイリアス一覧
-```
 
 ## 🎨 プロンプト
 
@@ -219,10 +198,17 @@ launchctl kickstart -k "gui/$(id -u)/org.pqrs.service.agent.karabiner_console_us
 | JSON / TOML / YAML / plist | 壊れた設定ファイル（配ると新しいマシンでキーボードやシェルが動かない） |
 | Karabiner の構造 | JSON としては読めるが manipulators が欠けている等、リマップが効かない状態 |
 | 秘密情報・個人情報 | 絶対パスのハードコード、トークン・秘密鍵、意図しないメールアドレス |
+| 社内固有の識別子 | 社内ドメイン・サービス名など。パターンは `~/.dotfiles-deny-patterns` に書く（下記） |
 
 このリポジトリは public です。`brew bundle dump` のように実機の状態を機械的に吐いた
 ファイルは、絶対パスや社内固有のパッケージ名をそのまま素通しします。目視では滑るので
 機械で見ます。
+
+### 社内固有語の検査
+
+社内のドメインやサービス名は、**パターンそのものが社内情報**なのでリポジトリに置けません。
+`~/.dotfiles-deny-patterns` に1行1正規表現で書くと `check.sh` が読みます（Git管理外）。
+ファイルが無ければこの検査はスキップされます。
 
 ## 🖥 GUIアプリの設定
 
