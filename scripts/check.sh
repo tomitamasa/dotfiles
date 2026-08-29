@@ -79,6 +79,17 @@ for f in .amethyst.yml .github/workflows/*.yaml .github/workflows/*.yml; do
   fi
 done
 
+section "plist"
+# plutil は macOS 専用のため、静的検査が ubuntu でも走るよう plistlib で読む
+for f in macos/*.plist; do
+  [ -f "$f" ] || continue
+  if python3 -c "import plistlib,sys; plistlib.load(open(sys.argv[1],'rb'))" "$f" 2>/dev/null; then
+    ok "$f"
+  else
+    fail "$f が plist として壊れている"
+  fi
+done
+
 # ------------------------------------------------------------- Karabiner
 # JSON として読めても、構造が壊れていればキーリマップは効かない。
 

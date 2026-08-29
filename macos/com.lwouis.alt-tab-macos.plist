@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>appearanceSize</key>
+	<string>0</string>
+	<key>menubarIconShown</key>
+	<string>false</string>
+	<key>nextWindowShortcut</key>
+	<dict>
+		<key>secureData</key>
+		<data>
+		YnBsaXN0MDDUAQIDBAUGBwpYJHZlcnNpb25ZJGFyY2hpdmVyVCR0b3BYJG9i
+		amVjdHMSAAGGoF8QD05TS2V5ZWRBcmNoaXZlctEICVRyb290gAGmCwwZGhsc
+		VSRudWxs1g0ODxAREhMUFRQXGF1tb2RpZmllckZsYWdzXxAbY2hhcmFjdGVy
+		c0lnbm9yaW5nTW9kaWZpZXJzViRjbGFzc1pjaGFyYWN0ZXJzV2tleUNvZGVX
+		dmVyc2lvboADgASABYAEgAKAABAPEABRctIdHh8gWiRjbGFzc25hbWVYJGNs
+		YXNzZXNaU1JTaG9ydGN1dKIfIVhOU09iamVjdAgRGiQpMjdJTFFTWmBte5mg
+		q7O7vb/Bw8XHycvN0t3m8fQAAAAAAAABAQAAAAAAAAAiAAAAAAAAAAAAAAAA
+		AAAA/Q==
+		</data>
+		<key>string</key>
+		<string>R</string>
+	</dict>
+	<key>preferencesVersion</key>
+	<string>11.5.0</string>
+	<key>settingsWindowShownOnFirstLaunch</key>
+	<string>true</string>
+	<key>updatePolicy</key>
+	<string>1</string>
+</dict>
+</plist>

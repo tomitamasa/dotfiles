@@ -16,3 +16,6 @@ dist
 *_dsa
 *_ecdsa
 *_ed25519
+
+# Claude Code のローカル設定（~/.config/git/ignore から移設）
+**/.claude/settings.local.json
