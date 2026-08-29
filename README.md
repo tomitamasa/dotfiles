@@ -267,7 +267,7 @@ export OPENAI_API_KEY="sk-xxxx"
 | Raycast の設定 | エクスポートが暗号化されたバイナリで、差分が読めず git に向かない |
 | `~/.secrets` | API キー・トークン。公開リポジトリに置けない |
 | `~/.dotfiles-profile` / `~/.dotfiles-deny-patterns` | 端末ごとの値。前者は端末の種別、後者は社内固有語で、いずれもリポジトリに載せない |
-| `~/.config/mise/conf.d/*.toml` | 端末ごとのランタイム版の上書き。共通の版は `mise/config.toml` で管理する |
+| `~/.config/mise/config.local.toml` | 端末ごとのランタイム版の上書き。共通の版は `mise/config.toml` で管理する |
 
 新しいマシンではこれらを手で設定します。管理対象に加えたくなったら、まず
 「更新のたびに差分を読めるか」を判断基準にしてください。読めない形式のものは
@@ -314,14 +314,23 @@ echo personal > ~/.dotfiles-profile   # 私用端末
 ### ランタイムのバージョンを端末ごとに変える
 
 `mise/config.toml` は全端末共通のバージョンを決めています。特定の端末だけ別の
-バージョンを使いたいときは、リポジトリを書き換えず `~/.config/mise/conf.d/` に
-置きます。conf.d 側が `config.toml` に優先します（Git管理外）。
+バージョンを使いたいときは、リポジトリを書き換えず `~/.config/mise/config.local.toml`
+に置きます（Git管理外）。同じディレクトリの `config.toml`（= リポジトリへの symlink）
+より優先されます。
 
 ```bash
-mkdir -p ~/.config/mise/conf.d
-printf '[tools]\nnode = "24"\n' > ~/.config/mise/conf.d/local.toml
-mise trust ~/.config/mise/conf.d/local.toml
+printf '[tools]\nnode = "24"\n' > ~/.config/mise/config.local.toml
+mise trust ~/.config/mise/config.local.toml
 ```
+
+効いているかは `mise current node` で確かめます。
+
+`~/.config/mise/conf.d/*.toml` は **使えません**。conf.d は `config.toml` に負けるため、
+置いても共通の版のまま変わりません（mise 2026.3.8 で実測）。
+
+なお作業ディレクトリがこのリポジトリの中にあるときは、`mise/config.toml` が
+プロジェクト設定として扱われ、端末ローカルの上書きより優先されます。dotfiles を
+編集している間だけ共通の版になるということで、他のプロジェクトには影響しません。
 
 共通のバージョンを変えたいだけなら `mise/config.toml` を直接編集してコミットします。
 
