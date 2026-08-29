@@ -92,29 +92,14 @@ dotfiles/
 
 ## 🔧 主要コマンド
 
-### Git
+### プロジェクト固有
 ```bash
-ga                    # git add
-gc                    # git commit -v
-gs                    # git status
-gd                    # git diff
-glo                   # git log --oneline
-gp                    # git push origin
-gph                   # git push origin HEAD
-gpl                   # git pull origin
-gsw                   # git switch
-gswc                  # git switch -c
-gb                    # git branch --all
+yarn                  # docker compose exec dev-server yarn
 ```
 
-### Docker
-```bash
-dcom                  # docker compose
-du                    # docker compose up
-dd                    # docker compose down
-ded                   # docker compose exec dev-server
-dew                   # docker compose exec web
-```
+git / docker の短縮エイリアスは持っていません。手で叩いていた頃の名残であり、
+実際にコマンドを打つのは Claude Code 側になったためです。
+`yarn` だけはコンテナ内で動かす必要があるので残しています。
 
 ### モダンCLI
 標準コマンドを置き換えています。素の挙動が必要なときは `command cat` のように `command` を前置します。
@@ -142,14 +127,6 @@ Alt+C                 # fzf でディレクトリ移動
 ↑                     # zsh 標準の履歴（atuin には奪わせていない）
 ```
 
-### シェル管理
-```bash
-acom                  # .zshrc を編集
-zsource               # .zshrc を再読み込み
-zconf                 # .zshrc を表示
-scom <keyword>        # エイリアスを検索
-lscom                 # エイリアス一覧
-```
 
 ## 🎨 プロンプト
 
@@ -219,10 +196,17 @@ launchctl kickstart -k "gui/$(id -u)/org.pqrs.service.agent.karabiner_console_us
 | JSON / TOML / YAML / plist | 壊れた設定ファイル（配ると新しいマシンでキーボードやシェルが動かない） |
 | Karabiner の構造 | JSON としては読めるが manipulators が欠けている等、リマップが効かない状態 |
 | 秘密情報・個人情報 | 絶対パスのハードコード、トークン・秘密鍵、意図しないメールアドレス |
+| 社内固有の識別子 | 社内ドメイン・サービス名など。パターンは `~/.dotfiles-deny-patterns` に書く（下記） |
 
 このリポジトリは public です。`brew bundle dump` のように実機の状態を機械的に吐いた
 ファイルは、絶対パスや社内固有のパッケージ名をそのまま素通しします。目視では滑るので
 機械で見ます。
+
+### 社内固有語の検査
+
+社内のドメインやサービス名は、**パターンそのものが社内情報**なのでリポジトリに置けません。
+`~/.dotfiles-deny-patterns` に1行1正規表現で書くと `check.sh` が読みます（Git管理外）。
+ファイルが無ければこの検査はスキップされます。
 
 ## 🖥 GUIアプリの設定
 

@@ -139,6 +139,24 @@ else
   ok "意図しないメールアドレスなし"
 fi
 
+# 社内固有の識別子（ドメイン・サービス名・管理画面のパス）。
+# パターンそのものが社内情報になるため、リポジトリには置かず
+# ~/.dotfiles-deny-patterns に書く（1行1正規表現・# はコメント）。
+DENY_FILE="$HOME/.dotfiles-deny-patterns"
+if [ -f "$DENY_FILE" ]; then
+  patterns=$(grep -vE '^[[:space:]]*(#|$)' "$DENY_FILE")
+  if [ -z "$patterns" ]; then
+    skip "社内固有語の検査（パターンが空）"
+  elif hits=$(echo "$TRACKED" | xargs grep -inE "$(echo "$patterns" | paste -sd '|' -)" 2>/dev/null); then
+    fail "社内固有の識別子が含まれています"
+    echo "$hits" | indent
+  else
+    ok "社内固有の識別子なし（$(echo "$patterns" | wc -l | tr -d ' ') パターンで検査）"
+  fi
+else
+  skip "社内固有語の検査（~/.dotfiles-deny-patterns が無い）"
+fi
+
 # ----------------------------------------------------------------- 結果
 
 echo
