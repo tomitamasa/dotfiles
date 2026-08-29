@@ -136,7 +136,7 @@ jobs:
 
             # 自前の関数・エイリアスが生きていること
             bindkey "^g" | grep -q ghq_fzf_repo || { echo "FAIL: Ctrl+G binding not set"; exit 1; }
-            alias ga | grep -q "git add" || { echo "FAIL: git aliases not loaded"; exit 1; }
+            alias gsw | grep -q "git switch" || { echo "FAIL: git aliases not loaded"; exit 1; }
             alias ls | grep -q eza      || { echo "FAIL: eza alias not loaded"; exit 1; }
 
             echo "zshrc OK"
