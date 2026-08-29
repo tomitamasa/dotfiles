@@ -14,7 +14,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 FAILED=0
 ok()      { echo "  OK   $*"; }
 fail()    { echo "  FAIL $*"; FAILED=1; }
-skip()    { echo "  SKIP $* (未インストール)"; }
+skip()    { echo "  SKIP $*"; }
 section() { echo; echo "== $1"; }
 indent()  { while IFS= read -r line; do echo "       $line"; done; }
 
@@ -28,7 +28,7 @@ if command -v shellcheck &>/dev/null; then
     fail "shellcheck"
   fi
 else
-  skip "shellcheck"
+  skip "shellcheck（未インストール）"
 fi
 
 section "zsh の構文"
@@ -43,7 +43,7 @@ if command -v zsh &>/dev/null; then
     fi
   done
 else
-  skip "zsh"
+  skip "zsh（未インストール）"
 fi
 
 # ---------------------------------------------------- 設定ファイルの妥当性
@@ -59,15 +59,35 @@ for f in karabiner/karabiner.json karabiner/assets/complex_modifications/*.json;
   fi
 done
 
+# TOML を読むには tomllib（Python 3.11 以降）が要る。mise や pyenv の shim を
+# 経由すると python3 が古い版に解決される端末があり、そこでは「壊れていない
+# ファイルが壊れている」と報告されてしまう。直しようのない FAIL は検査の信用を
+# 落とすので、tomllib を持つ python を探し、無ければ検査自体を飛ばす。
+find_toml_python() {
+  local py
+  for py in python3 python3.13 python3.12 python3.11 /opt/homebrew/bin/python3 /usr/bin/python3; do
+    command -v "$py" &>/dev/null || continue
+    if "$py" -c 'import tomllib' 2>/dev/null; then
+      echo "$py"
+      return 0
+    fi
+  done
+  return 1
+}
+
 section "TOML"
-for f in atuin/config.toml zsh/plugins.toml; do
-  [ -f "$f" ] || continue
-  if python3 -c "import tomllib,sys; tomllib.load(open(sys.argv[1],'rb'))" "$f" 2>/dev/null; then
-    ok "$f"
-  else
-    fail "$f が TOML として壊れている"
-  fi
-done
+if toml_python=$(find_toml_python); then
+  for f in atuin/config.toml zsh/plugins.toml; do
+    [ -f "$f" ] || continue
+    if "$toml_python" -c "import tomllib,sys; tomllib.load(open(sys.argv[1],'rb'))" "$f" 2>/dev/null; then
+      ok "$f"
+    else
+      fail "$f が TOML として壊れている"
+    fi
+  done
+else
+  skip "TOML の検査（tomllib を持つ python3 が無い。Python 3.11 以降が要る）"
+fi
 
 section "YAML"
 for f in .amethyst.yml .github/workflows/*.yaml .github/workflows/*.yml; do

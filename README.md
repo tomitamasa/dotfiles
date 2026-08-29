@@ -188,6 +188,12 @@ launchctl kickstart -k "gui/$(id -u)/org.pqrs.service.agent.karabiner_console_us
 ./scripts/check-brewfile.sh  # Brewfile のパッケージが実在するか（brew が必要）
 ```
 
+`check.sh` は「直しようのない FAIL」を出さないようにしています。たとえば TOML の
+検査は `tomllib`（Python 3.11 以降）が要りますが、mise や pyenv の shim 越しに
+古い `python3` が出てくる端末があります。そこで壊れていないファイルを FAIL と
+報告すると検査そのものが信用されなくなるため、使える `python3` を探し、無ければ
+その検査だけ SKIP します。
+
 `check.sh` が見ているもの:
 
 | 対象 | 見つけたいもの |
@@ -261,6 +267,7 @@ export OPENAI_API_KEY="sk-xxxx"
 | Raycast の設定 | エクスポートが暗号化されたバイナリで、差分が読めず git に向かない |
 | `~/.secrets` | API キー・トークン。公開リポジトリに置けない |
 | `~/.dotfiles-profile` / `~/.dotfiles-deny-patterns` | 端末ごとの値。前者は端末の種別、後者は社内固有語で、いずれもリポジトリに載せない |
+| `~/.config/mise/conf.d/*.toml` | 端末ごとのランタイム版の上書き。共通の版は `mise/config.toml` で管理する |
 
 新しいマシンではこれらを手で設定します。管理対象に加えたくなったら、まず
 「更新のたびに差分を読めるか」を判断基準にしてください。読めない形式のものは
@@ -303,6 +310,20 @@ echo personal > ~/.dotfiles-profile   # 私用端末
 ```
 
 新しい区分を増やしたいときは `scripts/Brewfile.<名前>` を置き、`~/.dotfiles-profile` にその名前を書きます（例: `work`）。
+
+### ランタイムのバージョンを端末ごとに変える
+
+`mise/config.toml` は全端末共通のバージョンを決めています。特定の端末だけ別の
+バージョンを使いたいときは、リポジトリを書き換えず `~/.config/mise/conf.d/` に
+置きます。conf.d 側が `config.toml` に優先します（Git管理外）。
+
+```bash
+mkdir -p ~/.config/mise/conf.d
+printf '[tools]\nnode = "24"\n' > ~/.config/mise/conf.d/local.toml
+mise trust ~/.config/mise/conf.d/local.toml
+```
+
+共通のバージョンを変えたいだけなら `mise/config.toml` を直接編集してコミットします。
 
 ## 🏗️ アーキテクチャ
 
