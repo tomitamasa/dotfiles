@@ -92,16 +92,14 @@ dotfiles/
 
 ## 🔧 主要コマンド
 
-### Git / Docker
-シェル履歴 7169 件（2023-07 以降）で実際に使われていたものだけを残しています。
-
+### プロジェクト固有
 ```bash
-gsw                   # git switch
-gsm                   # git switch master
-gph                   # git push origin HEAD
-du                    # docker compose up（標準の du を隠すので注意）
 yarn                  # docker compose exec dev-server yarn
 ```
+
+git / docker の短縮エイリアスは持っていません。手で叩いていた頃の名残であり、
+実際にコマンドを打つのは Claude Code 側になったためです。
+`yarn` だけはコンテナ内で動かす必要があるので残しています。
 
 ### モダンCLI
 標準コマンドを置き換えています。素の挙動が必要なときは `command cat` のように `command` を前置します。

@@ -7,13 +7,7 @@ alias la='eza -la --icons=auto --git --group-directories-first'
 alias lt='eza --tree --level=2 --icons=auto'
 alias lg='lazygit'
 
-# Git
-# 使用実績のあるものだけ残す（履歴 7169 件で実測）
-alias gsw='git switch'
-alias gsm='git switch master'
-alias gph='git push origin HEAD'
-
-# Docker
-# du は標準の du（ディスク使用量）を隠すので注意。実測で使っていたため残す
-alias du='docker compose up'
+# プロジェクト固有
+# git / docker の短縮エイリアスは、手で叩いていた頃の名残なので持たない。
+# yarn だけはコンテナ内で動かす必要があるため残す。
 alias yarn='docker compose exec dev-server yarn'
