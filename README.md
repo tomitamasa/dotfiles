@@ -178,7 +178,10 @@ Ghostty の日本語は `BIZ UDGothic` にフォールバックし、`font-featu
 - **Caps Lock** → **Right Option**
 - **左Command** ⇄ **左Control** の入れ替え
 - **Home/End** キーのmacOS対応
-- **Vim風**ナビゲーション、カーソル移動、アプリ切り替え
+- **Vim風**ナビゲーション、カーソル移動
+
+アプリ・ウィンドウの切り替えは AltTab（ライブサムネイル付き）に任せているため、
+Karabiner 側では扱いません。
 
 `~/.config/karabiner` をディレクトリごとリンクしています。`karabiner.json` を単体でリンクすると
 Karabiner-Elements が保存のたびにリンクを消してファイルで置き換えるため、
