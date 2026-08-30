@@ -31,6 +31,7 @@ brew "lazygit"    # Git TUI（lg に割当）
 brew "git-delta"  # git diff/show/log の pager
 brew "atuin"      # シェル履歴（Ctrl+R。同期は無効）
 brew "shellcheck" # CI と同じ lint をローカルでも回す
+brew "actionlint" # GitHub Actions ワークフローの検査。同じく check.sh から呼ぶ
 # クラウド / DB
 brew "amazon-ecs-cli"
 brew "awscli"

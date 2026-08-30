@@ -200,6 +200,7 @@ launchctl kickstart -k "gui/$(id -u)/org.pqrs.service.agent.karabiner_console_us
 | 対象 | 見つけたいもの |
 |------|--------------|
 | shellcheck / `zsh -n` | シェルスクリプトと zsh 設定の構文エラー |
+| actionlint | GitHub Actions ワークフローの誤り（`uses` のタグ、`${{ }}` の式、`run` 内の shell）|
 | JSON / TOML / YAML / plist | 壊れた設定ファイル（配ると新しいマシンでキーボードやシェルが動かない） |
 | Karabiner の構造 | JSON としては読めるが manipulators が欠けている等、リマップが効かない状態 |
 | 秘密情報・個人情報 | 絶対パスのハードコード、トークン・秘密鍵、意図しないメールアドレス |
