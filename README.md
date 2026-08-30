@@ -35,6 +35,7 @@ p10k configure          # プロンプトのカスタマイズ
 ### 開発ツール
 - **Homebrew**: パッケージマネージャー
 - **mise**: バージョン管理（asdf後継）
+- **uv**: Python のパッケージ管理（`uv "openhands"` の前提でもある）
 - **fzf**: ファジーファインダー
 - **ghq**: リポジトリ管理
 - **モダンCLI**: ripgrep / fd / bat / eza / zoxide / lazygit / git-delta

@@ -19,6 +19,7 @@ brew "mas"
 brew "curl"
 brew "gnupg"
 brew "pipx"
+brew "uv"          # Python パッケージ管理。下部の uv "openhands" もこれに依存する
 brew "terminal-notifier"
 # モダン CLI（既存 alias と衝突しない範囲で導入。詳細は zsh/aliases.zsh）
 brew "ripgrep"    # grep 代替
