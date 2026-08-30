@@ -99,6 +99,19 @@ for f in .amethyst.yml .github/workflows/*.yaml .github/workflows/*.yml; do
   fi
 done
 
+# YAML として読めることと、ワークフローとして正しいことは別物。uses のタグ違い、
+# ${{ }} の式エラー、run: の中の shell ミスはここでしか捕まらない。
+section "GitHub Actions"
+if command -v actionlint &>/dev/null; then
+  if actionlint; then
+    ok "actionlint"
+  else
+    fail "actionlint"
+  fi
+else
+  skip "actionlint（未インストール）"
+fi
+
 section "plist"
 # plutil は macOS 専用のため、静的検査が ubuntu でも走るよう plistlib で読む
 for f in macos/*.plist; do
