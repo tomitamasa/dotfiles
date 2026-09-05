@@ -114,7 +114,7 @@ fi
 
 section "plist"
 # plutil は macOS 専用のため、静的検査が ubuntu でも走るよう plistlib で読む
-for f in macos/*.plist; do
+for f in macos/*.plist launchagents/*.plist.template; do
   [ -f "$f" ] || continue
   if python3 -c "import plistlib,sys; plistlib.load(open(sys.argv[1],'rb'))" "$f" 2>/dev/null; then
     ok "$f"

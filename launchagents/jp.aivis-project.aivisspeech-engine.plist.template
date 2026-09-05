@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>jp.aivis-project.aivisspeech-engine</string>
+
+  <!-- AivisSpeech.app に同梱のエンジンを GUI 抜きで常駐させる。
+       Claude Code の通知フック (~/.claude/hooks/voicevox-notify.sh) が
+       自作の音声モデルで喋るため。
+
+       ポートは GUI 既定の 10101 ではなく 10102 を使う。GUI を開くと GUI 自身が
+       10101 でエンジンを立てるので、そこに常駐させると片方が必ず起動に失敗する。
+       別ポートなら 2 プロセスが共存でき（モデル一覧・合成とも問題ないことを実測）、
+       フックは 10102 → 10101 → VOICEVOX(50021) → say の順に降りる。
+
+       音声モデル自体は ~/Library/Application Support/AivisSpeech-Engine/ に
+       置かれ、このリポジトリでは管理しない。新しい端末ではモデルを入れるまで
+       フックは下位のエンジンにフォールバックする。 -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Applications/AivisSpeech.app/Contents/Resources/AivisSpeech-Engine/run</string>
+    <string>--host</string>
+    <string>127.0.0.1</string>
+    <string>--port</string>
+    <string>10102</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Applications/AivisSpeech.app/Contents/Resources/AivisSpeech-Engine</string>
+
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>__HOME__/Library/Logs/aivisspeech-engine.log</string>
+  <key>StandardErrorPath</key>
+  <string>__HOME__/Library/Logs/aivisspeech-engine.log</string>
+
+  <key>ProcessType</key>
+  <string>Background</string>
+</dict>
+</plist>

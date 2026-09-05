@@ -31,6 +31,7 @@ p10k configure          # プロンプトのカスタマイズ
 - **Amethyst**: タイル型ウィンドウマネージャー
 - **Karabiner**: キーボードカスタマイズ（実際に効いている `karabiner.json` ごと管理）
 - **VSCode**: 拡張機能とワークスペース設定
+- **LaunchAgent**: GUI 抜きで常駐させるサービス（音声合成エンジン）。私用端末のみ・アプリが入っている端末のみ
 
 ### 開発ツール
 - **Homebrew**: パッケージマネージャー
@@ -63,6 +64,8 @@ dotfiles/
 │   └── keybindings.json  # 同キーバインド
 ├── macos/
 │   └── *.plist           # GUIアプリの設定（AltTab・Amethyst）
+├── launchagents/
+│   └── *.plist.template  # 常駐サービス（__HOME__ を install.sh が埋める）
 ├── ghostty/
 │   └── config            # Ghostty設定（cmuxも同じファイルを読む）
 ├── git/
