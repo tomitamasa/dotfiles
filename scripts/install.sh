@@ -33,6 +33,8 @@ source "$SCRIPT_DIR/lib/zsh.sh"
 source "$SCRIPT_DIR/lib/macos.sh"
 # shellcheck source=lib/defaults.sh
 source "$SCRIPT_DIR/lib/defaults.sh"
+# shellcheck source=lib/launchagents.sh
+source "$SCRIPT_DIR/lib/launchagents.sh"
 
 # Install Homebrew
 install_homebrew
@@ -57,6 +59,9 @@ configure_macos
 
 # Import GUI app settings (AltTab, Amethyst)
 import_app_defaults "$DOTFILES_DIR"
+
+# Install LaunchAgents (personal profile only)
+install_launch_agents "$DOTFILES_DIR"
 
 echo ""
 if [ "$INSTALL_STATUS" -ne 0 ]; then
