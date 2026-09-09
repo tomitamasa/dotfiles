@@ -63,7 +63,7 @@ dotfiles/
 │   ├── settings.json     # VS Code のユーザー設定
 │   └── keybindings.json  # 同キーバインド
 ├── macos/
-│   └── *.plist           # GUIアプリの設定（AltTab・Amethyst）
+│   └── *.plist           # GUIアプリの設定（Amethyst）
 ├── launchagents/
 │   └── *.plist.template  # 常駐サービス（__HOME__ を install.sh が埋める）
 ├── ghostty/
@@ -168,8 +168,8 @@ Ghostty の日本語は `BIZ UDGothic` にフォールバックし、`font-featu
 - **Home/End** キーのmacOS対応
 - **Vim風**ナビゲーション、カーソル移動
 
-アプリ・ウィンドウの切り替えは AltTab（ライブサムネイル付き）に任せているため、
-Karabiner 側では扱いません。
+アプリ・ウィンドウの切り替えは macOS 標準の ⌘Tab を使い、Karabiner 側では扱いません
+（AltTab を使わない理由は[意図的に管理しないもの](#-意図的に管理しないもの)を参照）。
 
 `~/.config/karabiner` をディレクトリごとリンクしています。`karabiner.json` を単体でリンクすると
 Karabiner-Elements が保存のたびにリンクを消してファイルで置き換えるため、
@@ -222,8 +222,7 @@ launchctl kickstart -k "gui/$(id -u)/org.pqrs.service.agent.karabiner_console_us
 ## 🖥 GUIアプリの設定
 
 設定画面でしか変えられないものは `macos/*.plist` に置き、`install.sh` が
-`defaults import` で流し込みます。対象は AltTab（ウィンドウ切り替え）と
-Amethyst（ウィンドウ配置のキーバインド）です。
+`defaults import` で流し込みます。対象は Amethyst（ウィンドウ配置のキーバインド）です。
 
 設定を変えたら書き出し直します。
 
@@ -273,6 +272,7 @@ export OPENAI_API_KEY="sk-xxxx"
 | `~/.secrets` | API キー・トークン。公開リポジトリに置けない |
 | `~/.dotfiles-profile` / `~/.dotfiles-deny-patterns` | 端末ごとの値。前者は端末の種別、後者は社内固有語で、いずれもリポジトリに載せない |
 | `~/.config/mise/config.local.toml` | 端末ごとのランタイム版の上書き。共通の版は `mise/config.toml` で管理する |
+| AltTab | macOS 26 で全画面アプリへ切り替えると Space の遷移が2分ほど固まり、ウィンドウが Mission Control からも消える。AltTab を終了すると再現しないため外した（2026-09-10 の判断） |
 
 新しいマシンではこれらを手で設定します。管理対象に加えたくなったら、まず
 「更新のたびに差分を読めるか」を判断基準にしてください。読めない形式のものは

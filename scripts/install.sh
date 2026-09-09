@@ -57,7 +57,7 @@ install_zsh_plugins
 # Configure macOS system preferences
 configure_macos
 
-# Import GUI app settings (AltTab, Amethyst)
+# Import GUI app settings (Amethyst)
 import_app_defaults "$DOTFILES_DIR"
 
 # Install LaunchAgents (personal profile only)
