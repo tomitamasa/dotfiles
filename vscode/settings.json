@@ -2,7 +2,8 @@
   "git.confirmSync": false,
   "git.suggestSmartCommit": false,
   "git.autofetch": true,
-  "editor.fontFamily": "'FiraCode Nerd Font','MesloLGL Nerd Font','Hack Nerd Font'",
+  "editor.fontFamily": "'PlemolJP35 Console NF','FiraCode Nerd Font','MesloLGL Nerd Font','Hack Nerd Font'",
+  "terminal.integrated.fontFamily": "'PlemolJP35 Console NF','MesloLGS Nerd Font Mono'",
   "editor.tabSize": 2,
   "diffEditor.ignoreTrimWhitespace": false,
   "[markdown]": {

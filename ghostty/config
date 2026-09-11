@@ -6,9 +6,14 @@
 # 参考: https://ghostty.org/docs/config
 
 # ── 見た目 ────────────────────────────────────────────────────────────────
-# p10k を nerdfont-v3 で設定しているのでアイコン付きの Nerd Font が要る
-font-family = MesloLGS Nerd Font Mono
-# 日本語のフォールバック
+# PlemolJP35 Console NF（IBM Plex Mono + IBM Plex Sans JP）。
+# 日本語と Nerd Font アイコンを 1 ファミリーで賄うので、
+# 以前の MesloLGS Nerd Font Mono + BIZ UDGothic の 2 段構成は不要になった。
+#   - Console: 記号類を半角幅に寄せた版。罫線・アイコンの桁ズレを防ぐ
+#   - 35:      全角:半角 = 3:5。等幅 2:1 より半角が広く英字が読みやすい
+#   - NF:      p10k が nerdfont-v3 で要求するアイコンを含む
+font-family = PlemolJP35 Console NF
+# PlemolJP が持たない字形（絵文字・稀な漢字）の最終フォールバック
 font-family = BIZ UDGothic
 font-size = 13
 # 「プログラム」が「プロ㌘」等に化ける合字を無効化
