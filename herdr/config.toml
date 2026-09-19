@@ -1,0 +1,36 @@
+# herdr — Ghostty の中で Claude Code を複数リポジトリ × 複数セッションで回すための設定
+#
+# 実体は ~/dotfiles/herdr/config.toml（~/.config/herdr/config.toml へ symlink）。
+# 既定値の全一覧は `herdr --default-config`。ここには既定から変えた所だけ書く。
+# 検証: herdr 0.9.1 (Homebrew)。
+# 参考: https://herdr.dev/docs/configuration/
+#
+# 使い方のメモ:
+#   herdr            リポジトリの中で起動 (workspace = ディレクトリ)。再実行で再接続
+#   prefix q         detach。Ghostty を閉じてもエージェントは走り続ける
+#   prefix ?         キー一覧 / prefix w  workspace 切替 / prefix c  新タブ
+#   prefix v / -     右 / 下に分割 (Ghostty の Cmd+D と役割が被るので好きな方を使う)
+#   herdr integration install claude   Claude Code の状態 (working/blocked/idle) を hooks で正確に取る
+
+[terminal]
+# $SHELL 任せにせず zsh を明示 (herdr が別環境から起動されても同じシェルになる)
+default_shell = "/bin/zsh"
+# 新しいペイン・タブは元のペインの作業ディレクトリを引き継ぐ
+# (Ghostty の window-inherit-working-directory と同じ思想。worktree の中で分割すればそのまま同じ worktree)
+new_cwd = "follow"
+
+[keys]
+# 既定の ctrl+b は Claude Code の「実行中タスクをバックグラウンドへ」と衝突するので ctrl+q に変える。
+# ctrl+q は zsh (readline) でも Claude Code でも未使用。
+prefix = "ctrl+q"
+
+[session]
+# サーバー再起動時に各ペインのエージェント会話を復元する
+resume_agents_on_restore = true
+
+[experimental]
+# 日本語 IME で変換中のカーソル位置が隠れる問題を追跡して見せる (macOS)
+reveal_hidden_cursor_for_cjk_ime = true
+cjk_ime_agents = ["claude", "codex"]
+# prefix キーを押したら英数入力に切り替える (日本語入力のままだと prefix 後のキーが化ける)
+switch_ascii_input_source_in_prefix = true

@@ -60,6 +60,9 @@ create_dotfiles_symlinks() {
   # Ghostty（cmux も同じ設定ファイルを読む）
   create_symlink "$dotfiles_dir/ghostty/config" "$HOME/.config/ghostty/config"
 
+  # herdr（Ghostty の中で動くエージェント多重化）
+  create_symlink "$dotfiles_dir/herdr/config.toml" "$HOME/.config/herdr/config.toml"
+
   # mise（ランタイムのバージョン固定）
   create_symlink "$dotfiles_dir/mise/config.toml" "$HOME/.config/mise/config.toml"
 

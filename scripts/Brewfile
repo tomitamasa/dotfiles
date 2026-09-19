@@ -42,6 +42,9 @@ brew "mysql-client@8.4", link: true
 brew "ollama", restart_service: :changed
 brew "poppler"
 
+# エージェント多重化 (Ghostty の中で動く tmux 代替)。設定は herdr/config.toml
+brew "herdr"
+
 # === GUI (cask) ===
 # ターミナル
 cask "ghostty"    # メインターミナル。設定は ghostty/config
