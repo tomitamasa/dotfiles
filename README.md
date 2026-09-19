@@ -26,6 +26,7 @@ p10k configure          # プロンプトのカスタマイズ
 ### アプリケーション設定
 - **Ghostty**: メインターミナル（設定は `ghostty/config`）
 - **cmux**: AIエージェント並走用ターミナル（Ghostty の設定をそのまま読む）
+- **herdr**: Ghostty の中で動くエージェント多重化（tmux 代替）。detach しても Claude Code が走り続け、各ペインの状態を一覧できる。設定は `herdr/config.toml`
 - **Zsh**: メインシェル（Sheldon + Powerlevel10k）
 - **Git**: グローバル設定とignore
 - **Amethyst**: タイル型ウィンドウマネージャー
@@ -68,6 +69,8 @@ dotfiles/
 │   └── *.plist.template  # 常駐サービス（__HOME__ を install.sh が埋める）
 ├── ghostty/
 │   └── config            # Ghostty設定（cmuxも同じファイルを読む）
+├── herdr/
+│   └── config.toml       # herdr設定（prefix は ctrl+q）
 ├── git/
 │   ├── config            # Git設定（delta pager 込み）
 │   └── ignore            # グローバルignore
