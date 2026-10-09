@@ -79,8 +79,9 @@ check_file() {
   fi
 }
 
-check_file scripts/Brewfile
-check_file scripts/Brewfile.personal
+for file in scripts/Brewfile scripts/Brewfile.*; do
+  check_file "$file"
+done
 
 echo
 if [ "$FAILED" -eq 0 ]; then

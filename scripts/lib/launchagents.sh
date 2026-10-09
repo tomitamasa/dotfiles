@@ -19,14 +19,7 @@ install_launch_agents() {
     return 0
   fi
 
-  # 私用端末でのみ。業務端末に音声合成エンジンを常駐させる理由がない。
-  local profile
-  profile=$(resolve_profile)
-  if [ "$profile" != "personal" ]; then
-    echo "⏭  LaunchAgent は personal プロファイルのみ（現在: ${profile:-未設定}）"
-    return 0
-  fi
-
+  # Called only by the explicit --with voice --services selection.
   echo "🧩 LaunchAgent を配置中..."
   mkdir -p "$dest" "$HOME/Library/Logs"
 
@@ -48,7 +41,16 @@ install_launch_agents() {
       continue
     fi
 
-    sed "s:__HOME__:$HOME:g" "$tpl" > "$out"
+    local temporary
+    temporary=$(mktemp "$dest/.${label}.XXXXXXXX") || return 1
+    HOME_FOR_PLIST="$HOME" python3 -c 'import os,plistlib,sys; p=plistlib.load(open(sys.argv[1],"rb")); replace=lambda x: x.replace("__HOME__",os.environ["HOME_FOR_PLIST"]) if isinstance(x,str) else [replace(v) for v in x] if isinstance(x,list) else {k:replace(v) for k,v in x.items()} if isinstance(x,dict) else x; plistlib.dump(replace(p),open(sys.argv[2],"wb"))' "$tpl" "$temporary" || return 1
+    if [ -e "$out" ] || [ -L "$out" ]; then
+      local backup
+      backup=$(mktemp -d "${out}.backup.XXXXXXXX") || return 1
+      rmdir "$backup" || return 1
+      mv "$out" "$backup" || return 1
+    fi
+    mv "$temporary" "$out" || return 1
 
     # 読み込み済みだと bootstrap が失敗するので、必ず外してから入れ直す。
     # bootout は即座に返るが停止は非同期で、SIGTERM を送った直後はまだ登録が
@@ -65,7 +67,8 @@ install_launch_agents() {
     if launchctl bootstrap "gui/$uid" "$out" &>/dev/null; then
       echo "  ✅ $label"
     else
-      echo "  ⚠️  $label の読み込みに失敗しました（launchctl print gui/$uid/$label で確認）"
+      echo "  ⚠️  $label の読み込みに失敗しました（launchctl print gui/$uid/$label で確認）" >&2
+      return 1
     fi
   done
 }

@@ -1,113 +1,11 @@
-# 実機の状態に同期した宣言ファイル
-# 更新方法: brew bundle dump で書き出したうえで、
-#           下記のカテゴリ分け・コメントを手で戻す
-
-# === Taps ===
-tap "fujiwara/tap"
-tap "manaflow-ai/cmux"
-
-# === CLI (formula) ===
-# シェル・開発基盤
+# Minimal shared configuration; extra applications require --with.
+brew "gh"
+brew "ripgrep"
 brew "mise"
+brew "uv"
 brew "sheldon"
-brew "direnv"
 brew "fzf"
 brew "ghq"
-brew "gh"
 brew "jq"
-brew "mas"
-brew "curl"
-brew "gnupg"
-brew "pipx"
-brew "uv"          # Python パッケージ管理。下部の uv "openhands" もこれに依存する
-brew "terminal-notifier"
-# モダン CLI（既存 alias と衝突しない範囲で導入。詳細は zsh/aliases.zsh）
-brew "ripgrep"    # grep 代替
-brew "fd"         # find 代替
-brew "bat"        # cat 代替（cat の alias 置換はしない）
-brew "eza"        # ls 代替（ls/ll/la/lt に割当）
-brew "zoxide"     # cd 補助（z / zi。cd 自体は置き換えない）
-brew "lazygit"    # Git TUI（lg に割当）
-brew "git-delta"  # git diff/show/log の pager
-brew "atuin"      # シェル履歴（Ctrl+R。同期は無効）
-brew "shellcheck" # CI と同じ lint をローカルでも回す
-brew "actionlint" # GitHub Actions ワークフローの検査。同じく check.sh から呼ぶ
-# クラウド / DB
-brew "amazon-ecs-cli"
-brew "awscli"
-brew "mysql", link: false
-brew "mysql-client@8.4", link: true
-# AI / メディア
-brew "ollama", restart_service: :changed
-brew "poppler"
-
-# === GUI (cask) ===
-# ターミナル
-cask "ghostty"    # メインターミナル。設定は ghostty/config
-cask "cmux"       # AI エージェント並走用。ghostty/config をそのまま読む
-# 開発
-cask "claude-code"
-cask "codex"
-cask "docker-desktop"
-cask "visual-studio-code"
-cask "sequel-ace"
-cask "google-chrome"
-# 入力・ウィンドウ・ユーティリティ
-cask "amethyst"
-cask "bettertouchtool"
-cask "karabiner-elements"
-cask "alt-tab"    # ウィンドウ切り替えにライブサムネイルを出す
-cask "raycast"
-cask "scroll-reverser"
-cask "obsidian"
-cask "slack"
-# Nerd Fonts（Powerlevel10k / Ghostty / VSCode 用）
-cask "font-meslo-lg-nerd-font"
-cask "font-fira-code-nerd-font"
-cask "font-hack-nerd-font"
-
-# === Mac App Store ===
-mas "Xcode", id: 497799835
-mas "Keynote", id: 409183694
-mas "Numbers", id: 409201541
-mas "Pages", id: 409203825
-mas "iMovie", id: 408981434
-mas "GarageBand", id: 682658836
-mas "Kindle", id: 302584613
-mas "Monosnap", id: 540348655
-mas "Safe", id: 883070818
-
-# === VSCode 拡張 ===
-vscode "anthropic.claude-code"
-vscode "github.vscode-pull-request-github"
-vscode "eamodio.gitlens"
-vscode "ms-ceintl.vscode-language-pack-ja"
-vscode "ms-vscode-remote.remote-containers"
-vscode "ms-azuretools.vscode-containers"
-vscode "ms-vsliveshare.vsliveshare"
-vscode "ms-python.python"
-vscode "ms-python.vscode-pylance"
-vscode "ms-python.debugpy"
-vscode "ms-python.vscode-python-envs"
-vscode "ms-toolsai.jupyter"
-vscode "ms-toolsai.jupyter-keymap"
-vscode "ms-toolsai.jupyter-renderers"
-vscode "ms-toolsai.vscode-jupyter-cell-tags"
-vscode "ms-toolsai.vscode-jupyter-slideshow"
-vscode "biomejs.biome"
-vscode "vue.volar"
-vscode "sianglim.slim"
-vscode "bierner.markdown-mermaid"
-vscode "shd101wyy.markdown-preview-enhanced"
-vscode "yzane.markdown-pdf"
-vscode "mechatroner.rainbow-csv"
-vscode "ryu1kn.partial-diff"
-vscode "oderwat.indent-rainbow"
-vscode "streetsidesoftware.code-spell-checker"
-vscode "teabyii.ayu"
-
-# === その他ランタイム ===
-uv "openhands"
-npm "@playwright/cli"
-npm "chrome-devtools-mcp"
-npm "corepack"
+cask "ghostty"
+cask "font-plemol-jp-nf"

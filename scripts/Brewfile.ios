@@ -1,0 +1,2 @@
+brew "cocoapods"
+mas "Xcode", id: 497799835
