@@ -19,3 +19,16 @@ dist
 
 # Claude Code のローカル設定（~/.config/git/ignore から移設）
 **/.claude/settings.local.json
+
+# Local credentials (ignore rules do not remove tracked history)
+.env.*
+!.env.example
+!.env.sample
+*service-account*.json
+*firebase-adminsdk*.json
+credentials.json
+auth.json
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+__pycache__/

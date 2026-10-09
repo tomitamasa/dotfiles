@@ -41,3 +41,16 @@ Thumbs.db
 # Backup files created by install.sh
 *.backup
 **/*.backup
+
+# Local credentials (ignore rules do not remove tracked history)
+.env.*
+!.env.example
+!.env.sample
+*service-account*.json
+*firebase-adminsdk*.json
+credentials.json
+auth.json
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+__pycache__/

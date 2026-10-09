@@ -30,4 +30,4 @@ fi
 # プロジェクト固有
 # git / docker の短縮エイリアスは、手で叩いていた頃の名残なので持たない。
 # yarn だけはコンテナ内で動かす必要があるため残す。
-alias yarn='docker compose exec dev-server yarn'
+# Container-specific commands belong in each project, not a global yarn alias.

@@ -1,82 +1,64 @@
 #!/bin/bash
-
-# Dotfiles installation script for macOS
-# Refactored for simplicity and modularity
-
+# No arguments: plan only. Mutations require --apply.
 # shellcheck source-path=SCRIPTDIR
-set -e  # Exit on error
-
-echo "🚀 Starting dotfiles installation..."
-
-# Get dotfiles directory
+set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(dirname "$SCRIPT_DIR")"
-
-echo "📂 Dotfiles directory: $DOTFILES_DIR"
-
-# Check if we're on macOS
-if [ "$(uname)" != 'Darwin' ]; then
-  echo "❌ This script is designed for macOS only!"
-  exit 1
+APPLY=false
+MACOS=false
+SERVICES=false
+FEATURES=()
+usage() {
+  echo 'Usage: install.sh [--apply] [--with android|voice|editor|browser|notes|containers|window|cloud|ios|agents] [--macos] [--services]'
+}
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --apply) APPLY=true ;;
+    --macos) MACOS=true ;;
+    --services) SERVICES=true ;;
+    --with)
+      [ "$#" -ge 2 ] || { usage >&2; exit 2; }
+      case "$2" in
+        android|voice|editor|browser|notes|containers|window|cloud|ios|agents) FEATURES+=("$2") ;;
+        *) echo "Unknown feature: $2" >&2; exit 2 ;;
+      esac
+      shift ;;
+    --help|-h) usage; exit 0 ;;
+    *) usage >&2; exit 2 ;;
+  esac
+  shift
+done
+if $SERVICES; then
+  case " ${FEATURES[*]-} " in
+    *' voice '*) ;;
+    *) echo '--services requires --with voice' >&2; exit 2 ;;
+  esac
 fi
-
-echo "✅ macOS detected"
-
-# Source utility libraries
+echo 'PLAN: basic configuration'
+for feature in ${FEATURES[@]+"${FEATURES[@]}"}; do echo "PLAN: $feature"; done
+if $MACOS; then echo 'PLAN: macOS preferences'; fi
+if $SERVICES; then echo 'PLAN: selected voice services'; fi
+if ! $APPLY; then
+  echo 'No changes made. Add --apply to apply this selection.'
+  exit 0
+fi
+[ "$(uname)" = Darwin ] || { echo 'macOS only' >&2; exit 1; }
 # shellcheck source=lib/brew.sh
 source "$SCRIPT_DIR/lib/brew.sh"
 # shellcheck source=lib/symlinks.sh
 source "$SCRIPT_DIR/lib/symlinks.sh"
-# shellcheck source=lib/zsh.sh
-source "$SCRIPT_DIR/lib/zsh.sh"
-# shellcheck source=lib/macos.sh
-source "$SCRIPT_DIR/lib/macos.sh"
-# shellcheck source=lib/defaults.sh
-source "$SCRIPT_DIR/lib/defaults.sh"
-# shellcheck source=lib/launchagents.sh
-source "$SCRIPT_DIR/lib/launchagents.sh"
-
-# Install Homebrew
-install_homebrew
-
-# Create configuration symlinks
-create_dotfiles_symlinks "$DOTFILES_DIR"
-
-# Install packages from Brewfile
-# set -e で即座に落とさず、symlink 済みの環境を最後まで整えたうえで
-# 最後に失敗を報告する（パッケージが欠けても他の設定は使えるため）。
-INSTALL_STATUS=0
-install_packages "$DOTFILES_DIR" || INSTALL_STATUS=1
-
-# Install additional fonts if needed
-install_additional_fonts
-
-# Install Zsh plugins
-install_zsh_plugins
-
-# Configure macOS system preferences
-configure_macos
-
-# Import GUI app settings (Amethyst)
-import_app_defaults "$DOTFILES_DIR"
-
-# Install LaunchAgents (personal profile only)
-install_launch_agents "$DOTFILES_DIR"
-
-echo ""
-if [ "$INSTALL_STATUS" -ne 0 ]; then
-  echo "⚠️  一部のパッケージが入りませんでした（上のログを確認してください）"
-  echo "   App Store 経由（mas）のアプリは sudo が必要で、install.sh からは入りません。"
-  echo "   その場合は App Store から手で入れてください。"
-  echo ""
+require_homebrew
+install_brewfile "$SCRIPT_DIR/Brewfile"
+for feature in ${FEATURES[@]+"${FEATURES[@]}"}; do install_brewfile "$SCRIPT_DIR/Brewfile.$feature"; done
+create_dotfiles_symlinks "$DOTFILES_DIR" ${FEATURES[@]+"${FEATURES[@]}"}
+if $MACOS; then
+  # shellcheck source=lib/macos.sh
+  source "$SCRIPT_DIR/lib/macos.sh"
+  configure_macos
 fi
-echo "🎉 Dotfiles installation completed!"
-echo ""
-echo "📝 Next steps:"
-echo "  1. Restart your terminal or run: exec zsh"
-echo "  2. Run 'p10k configure' to customize your prompt"
-echo "  3. Customize aliases in ~/dotfiles/zsh/aliases.zsh"
-echo ""
-echo "✨ Enjoy your new development environment!"
-
-exit "$INSTALL_STATUS"
+if $SERVICES; then
+  # shellcheck source=lib/launchagents.sh
+  source "$SCRIPT_DIR/lib/launchagents.sh"
+  install_launch_agents "$DOTFILES_DIR"
+fi
+echo 'Selected configuration applied. Plugins are not fetched automatically; see README.'

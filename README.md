@@ -1,362 +1,70 @@
-# Dotfiles
+# 私用Macのdotfiles
 
-macOS用の個人dotfiles設定。
+必要なものだけを選び、既存設定を退避して適用する。2026-10-09以降、引数なしのインストーラは計画表示のみ。
 
-## 🚀 インストール
+## 初期設定
 
-```bash
-git clone https://github.com/tomitamasa/dotfiles.git ~/dotfiles
-cd ~/dotfiles
-./scripts/install.sh
-```
-
-私用端末なら、インストール前にプロファイルを指定します（業務端末には不要なものを分けるため）:
-```bash
-echo personal > ~/.dotfiles-profile
-```
-
-インストール後:
-```bash
-exec zsh                # シェル再起動
-p10k configure          # プロンプトのカスタマイズ
-```
-
-## 📁 構成
-
-### アプリケーション設定
-- **Ghostty**: メインターミナル（設定は `ghostty/config`）
-- **cmux**: AIエージェント並走用ターミナル（Ghostty の設定をそのまま読む）
-- **Zsh**: メインシェル（Sheldon + Powerlevel10k）
-- **Git**: グローバル設定とignore
-- **Amethyst**: タイル型ウィンドウマネージャー
-- **Karabiner**: キーボードカスタマイズ（実際に効いている `karabiner.json` ごと管理）
-- **VSCode**: 拡張機能とワークスペース設定
-- **LaunchAgent**: GUI 抜きで常駐させるサービス（音声合成エンジン）。私用端末のみ・アプリが入っている端末のみ
-
-### 開発ツール
-- **Homebrew**: パッケージマネージャー
-- **mise**: バージョン管理（asdf後継）
-- **uv**: Python のパッケージ管理（`uv "openhands"` の前提でもある）
-- **fzf**: ファジーファインダー
-- **ghq**: リポジトリ管理
-- **モダンCLI**: ripgrep / fd / bat / eza / zoxide / lazygit / git-delta
-- **atuin**: シェル履歴の全文検索（同期は無効。履歴は端末内に留まる）
-- **Docker**: コンテナ環境
-- **AWS CLI**: クラウド管理
-
-## 📁 ファイル構造
-
-```
-dotfiles/
-├── zsh/
-│   ├── .zshrc            # メイン設定
-│   ├── .zprofile         # ログインシェル設定
-│   ├── plugins.toml      # Sheldonプラグイン定義
-│   ├── aliases.zsh       # エイリアス（Git, Docker等）
-│   ├── functions.zsh     # カスタム関数（ghq+fzf等）
-│   └── .p10k.zsh         # Powerlevel10kプロンプト設定
-├── atuin/
-│   └── config.toml       # シェル履歴の設定（同期は無効）
-├── mise/
-│   └── config.toml       # ランタイムのバージョン固定
-├── vscode/
-│   ├── settings.json     # VS Code のユーザー設定
-│   └── keybindings.json  # 同キーバインド
-├── macos/
-│   └── *.plist           # GUIアプリの設定（Amethyst）
-├── launchagents/
-│   └── *.plist.template  # 常駐サービス（__HOME__ を install.sh が埋める）
-├── ghostty/
-│   └── config            # Ghostty設定（cmuxも同じファイルを読む）
-├── git/
-│   ├── config            # Git設定（delta pager 込み）
-│   └── ignore            # グローバルignore
-├── karabiner/            # ~/.config/karabiner をディレクトリごとリンク
-│   ├── karabiner.json    # 実際に効いている設定（Karabinerが直接書き込む）
-│   └── assets/           # インポート用の複雑なルール定義
-├── scripts/
-│   ├── install.sh        # メインインストーラー
-│   ├── check.sh          # 静的検査（CIと共通・手元でも回せる）
-│   ├── check-brewfile.sh # Brewfile のパッケージ実在検査
-│   ├── Brewfile          # パッケージ定義（全端末共通）
-│   ├── Brewfile.personal # 私用端末でのみ入れるもの
-│   └── lib/
-│       ├── brew.sh       # Homebrew管理
-│       ├── symlinks.sh   # シンボリックリンク作成
-│       ├── zsh.sh        # Sheldonプラグイン管理
-│       └── check_karabiner.py # karabiner.json の構造検査
-└── .amethyst.yml         # ウィンドウマネージャー設定
-```
-
-### 設計原則
-1. **モジュラー**: 機能別にファイルを分離
-2. **シンプル**: 複雑な処理を避け、理解しやすい構造
-3. **冪等性**: 何度実行しても安全
-4. **自動化**: 手動設定を最小限に抑制
-
-## 🔧 主要コマンド
-
-### プロジェクト固有
-```bash
-yarn                  # docker compose exec dev-server yarn
-```
-
-git / docker の短縮エイリアスは持っていません。手で叩いていた頃の名残であり、
-実際にコマンドを打つのは Claude Code 側になったためです。
-`yarn` だけはコンテナ内で動かす必要があるので残しています。
-
-### モダンCLI
-標準コマンドを置き換えています。素の挙動が必要なときは `command cat` のように `command` を前置します。
-
-| コマンド | 実体 | 備考 |
-|---------|------|------|
-| `cat` | bat | シンタックスハイライト付き。パイプ時は自動で素の出力 |
-| `ls` / `ll` / `la` | eza | アイコン・Git差分状態つき |
-| `lt` | eza --tree | 2階層までのツリー表示 |
-| `cd` | zoxide | 実在パスは通常の `cd`、それ以外は訪問履歴から推測して移動 |
-| `cdi` | zoxide | 候補を fzf で選んで移動 |
-| `lg` | lazygit | Git操作のTUI |
-| `fd` | fd | `find` 代替（`.gitignore` を自動尊重） |
-| `rg` | ripgrep | `grep` 代替 |
-
-`git diff` / `git show` / `git log` は delta 経由で表示されます（`--no-pager` 付きのエイリアスは従来どおり素の出力）。
-`fd` と `rg` はオプション体系が `find` / `grep` と異なるため、名前は置き換えていません。
-
-### ナビゲーション
-```bash
-Ctrl+G                # ghq + fzf でリポジトリ検索・移動
-Ctrl+R                # atuin でコマンド履歴検索（実行ディレクトリ・終了コードで絞込可）
-Ctrl+T                # fzf でファイル検索
-Alt+C                 # fzf でディレクトリ移動
-↑                     # zsh 標準の履歴（atuin には奪わせていない）
-```
-
-
-## 🎨 プロンプト
-
-**Powerlevel10k**を使用したモダンなプロンプト：
-- Git情報表示（ブランチ、ステータスを色分け）
-- 実行時間表示（3秒以上）
-- エラーステータス表示
-- Nerd Fontsアイコン対応
-
-### Zshプラグイン（Sheldon管理）
-| プラグイン | 機能 |
-|-----------|------|
-| romkatv/powerlevel10k | プロンプトテーマ |
-| zsh-users/zsh-autosuggestions | コマンド入力候補（グレー表示） |
-| zsh-users/zsh-syntax-highlighting | コマンド色分け |
-| hlissner/zsh-autopair | 括弧・クォート自動補完 |
-| zsh-users/zsh-completions | 追加補完定義 |
-
-### フォント
-以下のNerd Fontが自動インストールされます：
-- MesloLGS Nerd Font（Powerlevel10k / Ghostty で使用）
-- FiraCode Nerd Font（VSCode で使用）
-- Hack Nerd Font
-
-Ghostty の日本語は `BIZ UDGothic` にフォールバックし、`font-feature = -dlig` で
-合字化け（「プログラム」→「プロ㌘」）を無効化しています。
-
-## ⌨️ キーボードカスタマイズ
-
-### Karabiner設定
-`install.sh` を流すだけで、下記がすべて適用されます。GUI での手動インポートは不要です。
-
-- **Caps Lock** → **Right Option**
-- **左Command** ⇄ **左Control** の入れ替え
-- **Home/End** キーのmacOS対応
-- **Vim風**ナビゲーション、カーソル移動
-
-アプリ・ウィンドウの切り替えは macOS 標準の ⌘Tab を使い、Karabiner 側では扱いません
-（AltTab を使わない理由は[意図的に管理しないもの](#-意図的に管理しないもの)を参照）。
-
-`~/.config/karabiner` をディレクトリごとリンクしています。`karabiner.json` を単体でリンクすると
-Karabiner-Elements が保存のたびにリンクを消してファイルで置き換えるため、
-[公式ドキュメント](https://karabiner-elements.pqrs.org/docs/manual/misc/configuration-file-path/)の指示どおりディレクトリ単位にしています。
-
-GUI で設定を変えると `karabiner/karabiner.json` に差分が出るので、そのままコミットすれば
-別のマシンにも反映されます。設定ディレクトリを手で移した場合は、下記でサービスを再起動します。
+Homebrewは [公式サイト](https://brew.sh/) の内容を確認して手動導入する。このリポジトリはオンラインスクリプトを自動実行せず、第三者tapも自動trustしない。
 
 ```bash
-launchctl kickstart -k "gui/$(id -u)/org.pqrs.service.agent.karabiner_console_user_server"
+./scripts/install.sh --with android --with voice --with agents --with notes
+# 表示を確認してから適用
+./scripts/install.sh --apply --with android --with voice --with agents --with notes
 ```
 
-## ✅ 検査
+基本構成はGhostty、gh、ripgrep、mise、uv、sheldon、fzf、ghq、jqとMesloフォント1つ。シェルとGit設定を配置する。新規ソフトの導入は上記の適用操作時だけで、Mac初期化前の点検では適用しない。
 
-コミット前に手元で回せます。CI の静的検査ジョブは同じスクリプトを呼んでいるので、
-ここが通れば CI も通ります。
+| --with | 追加対象 |
+|---|---|
+| android | Android Studio。同梱Javaを利用し、SDKはアプリから選択 |
+| voice | AivisSpeechの手動導入・モデル復元用。アプリは [公式配布元](https://aivis-project.com/AivisSpeech) から入れる |
+| agents | Codex、Claude Code |
+| notes | Obsidian |
+| editor | Visual Studio Code。ユーザー設定とキーバインドを配置 |
+| browser | Chrome |
+| containers | Docker Desktop |
+| window | Amethyst、Karabiner、AltTab。入力設定はこの選択時だけ配置 |
+| cloud | AWS CLI、Fly CLI、Google Cloud CLI |
+| ios | Xcode、CocoaPods |
+
+`~/.dotfiles-profile` と `DOTFILES_PROFILE` は自動追加導入に使わない。Brewfile.personalは互換用の空ファイル。CAD、基板開発、加工機ツール、PlatformIO、独立Oracle Java、Leawoは基本・私用構成に含めない。azuki、plant-care、watering、kikurageはWindows機で開発する。
+
+## 明示的な設定変更
+
+`--macos` はDock・Finder等のmacOS設定を変更する。`--with voice --services` は導入済み音声エンジンのLaunchAgentを配置し起動する。どちらも通常適用には含まれない。アプリ設定の一括importも自動では行わない。
 
 ```bash
-./scripts/check.sh           # 設定ファイルの妥当性 + 秘密情報スキャン
-./scripts/check-brewfile.sh  # Brewfile のパッケージが実在するか（brew が必要）
+./scripts/install.sh --apply --with voice --services
 ```
 
-`check.sh` は「直しようのない FAIL」を出さないようにしています。たとえば TOML の
-検査は `tomllib`（Python 3.11 以降）が要りますが、mise や pyenv の shim 越しに
-古い `python3` が出てくる端末があります。そこで壊れていないファイルを FAIL と
-報告すると検査そのものが信用されなくなるため、使える `python3` を探し、無ければ
-その検査だけ SKIP します。
+AivisSpeech GUIは10101、常駐エンジンは10102を使う。現在のAIVMXモデル・辞書・設定はNASの `works/AivisSpeech-archive-20261009` に保存し、同梱のREADMEに従って復元する。履歴やモデルが復元できることを確認するまでMacを消去しない。
 
-`check.sh` が見ているもの:
+## シェルとランタイム
 
-| 対象 | 見つけたいもの |
-|------|--------------|
-| shellcheck / `zsh -n` | シェルスクリプトと zsh 設定の構文エラー |
-| actionlint | GitHub Actions ワークフローの誤り（`uses` のタグ、`${{ }}` の式、`run` 内の shell）|
-| JSON / TOML / YAML / plist | 壊れた設定ファイル（配ると新しいマシンでキーボードやシェルが動かない） |
-| Karabiner の構造 | JSON としては読めるが manipulators が欠けている等、リマップが効かない状態 |
-| 秘密情報・個人情報 | 絶対パスのハードコード、トークン・秘密鍵、意図しないメールアドレス |
-| 社内固有の識別子 | 社内ドメイン・サービス名など。パターンは `~/.dotfiles-deny-patterns` に書く（下記） |
+オプションのCLIが無くてもシェルが起動する。Android SDKは存在する場合だけPATHへ追加し、Android Studioがあれば同梱Javaを利用する。グローバルなyarn置換は行わず、コンテナ操作は各プロジェクトから実行する。
 
-このリポジトリは public です。`brew bundle dump` のように実機の状態を機械的に吐いた
-ファイルは、絶対パスや社内固有のパッケージ名をそのまま素通しします。目視では滑るので
-機械で見ます。
+ghqとfzfが利用できる対話シェルではCtrl+Gでリポジトリを選べる。Claudeのccd/ccw/cwt/cca/ccr/ccb関数は保持している。bat/eza等の補助エイリアスは対象コマンドがある場合だけ有効。zoxideはz/ziを使い、cdは置換しない。
 
-### 社内固有語の検査
+Sheldonは取得済みのlockがある場合だけ読み込む。新しいMacでは `zsh/plugins.toml` の取得元をレビューしてから `sheldon lock` を手動実行し、lockも退避する。更新は取得元と変更内容を確認して明示的に行う。初期インストーラはプラグインをダウンロードしない。
 
-社内のドメインやサービス名は、**パターンそのものが社内情報**なのでリポジトリに置けません。
-`~/.dotfiles-deny-patterns` に1行1正規表現で書くと `check.sh` が読みます（Git管理外）。
-ファイルが無ければこの検査はスキップされます。
+miseのグローバルなランタイム固定は初期適用しない。版は各プロジェクトで選ぶ。既存のmise/config.tomlやherdr/config.tomlは資料として保持し、herdr/cmuxや複数フォントは自動導入しない。必要な場合に個別設定する。
 
-## 🖥 GUIアプリの設定
+## 保存と秘密情報
 
-設定画面でしか変えられないものは `macos/*.plist` に置き、`install.sh` が
-`defaults import` で流し込みます。対象は Amethyst（ウィンドウ配置のキーバインド）です。
+既存ファイル・ディレクトリ・別向きsymlinkは `.backup.ランダム値` へ退避する。再適用で同じリンクなら退避を増やさない。欠落した元ファイルはエラーにする。
 
-設定を変えたら書き出し直します。
+`~/.secrets` は任意のシェルコードを実行するファイルなので、自分所有の通常ファイルかつ他ユーザーに権限がない場合だけ読み込む。`chmod 600 ~/.secrets` で保護し、Gitや履歴へ値を入れない。認証は可能なら各ツールのログイン機能を使う。
+
+ignoreは.env系・鍵・認証ファイルを除外するが、追跡済みファイルや過去のGit履歴の漏洩は取り消せない。スキャンは既知パターンによる点検で、全ての秘密情報を検出する保証ではない。
 
 ```bash
-./scripts/export-app-defaults.sh
+./scripts/check.sh
+./scripts/check-brewfile.sh
+python3 scripts/lib/security_audit.py --history
 ```
 
-インストール識別子・セッション履歴・ウィンドウ座標といった、他のマシンで意味を
-持たない値や公開したくない値は書き出し時に除外されます。
+検査は秘密値を表示せず位置だけを報告する。Mac消去前はコード全ブランチ・worktree・未追跡データ・Git LFS・署名資産・AI履歴を別途退避・検証する。
 
-## 🔄 更新
+## 手動復元する設定
 
-```bash
-cd ~/dotfiles
-git pull origin main
-./scripts/install.sh  # 冪等性保証
-```
-
-## 🔒 シークレット管理
-
-APIキーやトークンは `~/.secrets` に記述（gitで追跡されません）：
-
-```bash
-# ~/.secrets を作成
-touch ~/.secrets
-chmod 600 ~/.secrets
-```
-
-```bash
-# 記述例
-export GITHUB_TOKEN="ghp_xxxx"
-export OPENAI_API_KEY="sk-xxxx"
-```
-
-`.zshrc` が起動時に自動で読み込みます。グローバルgitignoreにより、`.secrets` は全リポジトリで無視されます。
-
-## 🚫 意図的に管理しないもの
-
-以下は「入れ忘れ」ではなく、検討したうえで管理外にしています。棚卸しのたびに
-再検討しないための記録です（2026-08-29 の判断）。
-
-| 対象 | 理由 |
-|------|------|
-| launchd ジョブ（日報生成・vault メンテ等） | plist を置いても呼び先のスクリプトが dotfiles の外にあり、単独では動かない |
-| BetterTouchTool の設定 | 設定量が多く、更新のたびに巨大な差分が出て運用が重い |
-| Raycast の設定 | エクスポートが暗号化されたバイナリで、差分が読めず git に向かない |
-| `~/.secrets` | API キー・トークン。公開リポジトリに置けない |
-| `~/.dotfiles-profile` / `~/.dotfiles-deny-patterns` | 端末ごとの値。前者は端末の種別、後者は社内固有語で、いずれもリポジトリに載せない |
-| `~/.config/mise/config.local.toml` | 端末ごとのランタイム版の上書き。共通の版は `mise/config.toml` で管理する |
-| AltTab | macOS 26 で全画面アプリへ切り替えると Space の遷移が2分ほど固まり、ウィンドウが Mission Control からも消える。AltTab を終了すると再現しないため外した（2026-09-10 の判断） |
-
-新しいマシンではこれらを手で設定します。管理対象に加えたくなったら、まず
-「更新のたびに差分を読めるか」を判断基準にしてください。読めない形式のものは
-入れても腐ります。
-
-## 📝 カスタマイズ
-
-### エイリアスを追加
-```bash
-vi ~/dotfiles/zsh/aliases.zsh   # エイリアスを追記
-source ~/.zshrc                  # 反映
-```
-
-### プラグインを追加
-```bash
-vi ~/dotfiles/zsh/plugins.toml  # [plugins.xxx] セクションを追記
-sheldon lock --update            # プラグインをインストール
-exec zsh                         # 反映
-```
-
-### Brewパッケージを追加
-
-全端末で使うものは `scripts/Brewfile` に、私用端末だけで使うものは `scripts/Brewfile.personal` に書きます。
-
-```bash
-brew bundle install --file=scripts/Brewfile
-brew bundle install --file=scripts/Brewfile.personal   # 私用端末のみ
-```
-
-### 端末プロファイル
-
-`install.sh` は 共通の `Brewfile` → `Brewfile.<プロファイル名>` の順に `brew bundle` を回します。
-プロファイルは次の優先順で決まり、未設定なら共通分だけを入れます。
-
-1. 環境変数 `DOTFILES_PROFILE`
-2. `~/.dotfiles-profile` の1行目（Git管理外。`.secrets` と同じくローカルにだけ置く）
-
-```bash
-echo personal > ~/.dotfiles-profile   # 私用端末
-```
-
-新しい区分を増やしたいときは `scripts/Brewfile.<名前>` を置き、`~/.dotfiles-profile` にその名前を書きます（例: `work`）。
-
-### ランタイムのバージョンを端末ごとに変える
-
-`mise/config.toml` は全端末共通のバージョンを決めています。特定の端末だけ別の
-バージョンを使いたいときは、リポジトリを書き換えず `~/.config/mise/config.local.toml`
-に置きます（Git管理外）。同じディレクトリの `config.toml`（= リポジトリへの symlink）
-より優先されます。
-
-```bash
-printf '[tools]\nnode = "24"\n' > ~/.config/mise/config.local.toml
-mise trust ~/.config/mise/config.local.toml
-```
-
-効いているかは `mise current node` で確かめます。
-
-`~/.config/mise/conf.d/*.toml` は **使えません**。conf.d は `config.toml` に負けるため、
-置いても共通の版のまま変わりません（mise 2026.3.8 で実測）。
-
-なお作業ディレクトリがこのリポジトリの中にあるときは、`mise/config.toml` が
-プロジェクト設定として扱われ、端末ローカルの上書きより優先されます。dotfiles を
-編集している間だけ共通の版になるということで、他のプロジェクトには影響しません。
-
-共通のバージョンを変えたいだけなら `mise/config.toml` を直接編集してコミットします。
-
-## 🏗️ アーキテクチャ
-
-### 冪等性の保証
-- 何度実行しても同じ状態。CI が `create_dotfiles_symlinks` を繰り返し実行し、退避ファイルが増えないことを検査します
-- 既存の実ファイル・実ディレクトリは `.backup` に退避（退避先が埋まっていれば日時を付与するため、入れ子にならない）
-- 別の場所を指すシンボリックリンクは退避せず張り替え
-- 重複インストールの回避
-
-### クロスプラットフォーム対応
-- Intel Mac / Apple Silicon対応
-- CI環境での軽量インストール
-- エラー耐性とリトライ機能
-
-### セキュリティ
-- **グローバルgitignore**: `.env`, `.secrets`, 秘密鍵等を全リポジトリで自動除外（`git/ignore`）
-- **`~/.secrets`**: APIキー等をgit管理外で安全に読み込み（`.zshrc`でsource）
-- **ファイルパーミッション**: `~/.secrets`は`chmod 600`で保護推奨
-
----
-
-**🌟 快適な開発環境をお楽しみください！**
+BetterTouchTool、Raycast、AIエージェント認証、他リポジトリを呼ぶLaunchAgentsは一括復元しない。Obsidian vaultの設定・添付は個人データとして保全する。AltTab・Amethystのplistは保管しているが、必要な設定だけ手動で適用する。設定書き出しの `scripts/export-app-defaults.sh` は引き続き利用できる。

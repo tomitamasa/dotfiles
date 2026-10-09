@@ -2,13 +2,15 @@
 ghq_fzf_repo() {
   local selected=$(ghq list -p | fzf --query "$LBUFFER" --select-1 --exit-0)
   if [[ -n "$selected" ]]; then
-    BUFFER="cd ${selected}"
+    BUFFER="cd -- ${(q)selected}"
     zle accept-line
   fi
   zle reset-prompt
 }
-zle -N ghq_fzf_repo
-bindkey '^g' ghq_fzf_repo
+if [[ -o interactive ]] && (( ${+commands[ghq]} && ${+commands[fzf]} )); then
+  zle -N ghq_fzf_repo
+  bindkey '^g' ghq_fzf_repo
+fi
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Claude Code: 複数リポジトリ × 複数セッションのナビゲーション
@@ -24,7 +26,7 @@ ccd() {
   local selected
   selected=$(ghq list -p | fzf --prompt='claude repo> ' --select-1 --exit-0) || return
   [[ -n "$selected" ]] || return
-  cd "$selected" || return
+  cd -- "$selected" || return
   claude "$@"
 }
 

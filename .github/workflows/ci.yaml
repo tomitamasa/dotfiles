@@ -1,169 +1,28 @@
 name: CI
-
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
-
+permissions:
+  contents: read
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
-
 jobs:
-  # 静的検査。macOS が要らないものはこちらに寄せる（速いうえ ubuntu は分単位の
-  # 課金倍率が macOS より低い）。中身は scripts/check.sh にあり、手元でも
-  # 同じものを `./scripts/check.sh` で回せる。
   static:
-    name: 静的検査
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install checkers
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends shellcheck zsh
-
-          # actionlint は apt に無いので公式のダウンロードスクリプトで入れる。
-          # 版は固定しない（shellcheck と同じ扱い。検査側は新しいほうが望ましい）。
-          curl -sSfL https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash \
-            | bash -s -- latest /usr/local/bin
-
-      - name: Run static checks
-        run: ./scripts/check.sh
-
-  # 実際に走らせて確かめるもの。install.sh が新しいマシンで通るかどうかが主眼。
-  install:
-    name: インストール検証 (macOS)
+      - run: sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends shellcheck zsh ruby
+      - run: ./scripts/check.sh
+  macos:
     runs-on: macos-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: brew install sheldon fzf mise ghq eza
-
-      # Brewfile のタイポや、rename・削除されたパッケージを検出する。
-      # `brew bundle list` は名前を並べるだけで実在を見ないため使えない。
-      - name: Verify Brewfile packages exist
-        run: ./scripts/check-brewfile.sh
-
-      - name: Verify symlink creation
-        run: |
-          source scripts/lib/symlinks.sh
-          create_dotfiles_symlinks "$(pwd)"
-
-          readlink ~/.zshrc | grep -q "zsh/.zshrc"
-          readlink ~/.zprofile | grep -q "zsh/.zprofile"
-          readlink ~/.gitconfig | grep -q "git/config"
-          readlink ~/.config/sheldon/plugins.toml | grep -q "zsh/plugins.toml"
-          readlink ~/.config/ghostty/config | grep -q "ghostty/config"
-          readlink ~/.config/atuin/config.toml | grep -q "atuin/config.toml"
-          readlink ~/.config/karabiner | grep -q "/karabiner$"
-
-          # リンク越しに中身へ到達できること（リンクが張れただけでは足りない）
-          test -f ~/.config/karabiner/karabiner.json
-          test -f ~/.config/karabiner/assets/complex_modifications/VimLike.json
-          echo "All symlinks OK"
-
-      - name: Verify symlink creation is idempotent
-        run: |
-          source scripts/lib/symlinks.sh
-
-          # 2回・3回と流しても退避ファイルが増えず、結果が変わらないこと
-          before=$(find "$HOME" -maxdepth 3 -name '*.backup*' | sort)
-          create_dotfiles_symlinks "$(pwd)" > /dev/null
-          create_dotfiles_symlinks "$(pwd)" > /dev/null
-          after=$(find "$HOME" -maxdepth 3 -name '*.backup*' | sort)
-
-          if [ "$before" != "$after" ]; then
-            echo "FAIL: 再実行で退避ファイルが増えました"
-            diff <(echo "$before") <(echo "$after") || true
-            exit 1
-          fi
-
-          readlink ~/.zshrc | grep -q "zsh/.zshrc"
-          readlink ~/.config/karabiner | grep -q "/karabiner$"
-          test -f ~/.config/karabiner/karabiner.json
-          echo "Idempotent OK"
-
-      - name: Verify global gitignore protects secrets
-        run: |
-          git config --global core.excludesfile | grep -q "gitignore_global" \
-            || { echo "FAIL: core.excludesfile not set"; exit 1; }
-          echo "OK: core.excludesfile -> $(git config --global core.excludesfile)"
-
-          cd "$(mktemp -d)"
-          git init -q
-          touch .env .secrets test.pem normal.txt
-          untracked=$(git status --porcelain)
-          echo "$untracked" | grep -q "normal.txt" \
-            || { echo "FAIL: normal.txt should be untracked"; exit 1; }
-          for f in .env .secrets test.pem; do
-            echo "$untracked" | grep -q "$f" \
-              && { echo "FAIL: $f should be globally ignored"; exit 1; }
-          done
-          echo "Global gitignore OK"
-
-      # 関数が定義されていることではなく、実際に適用できることを見る。
-      # set -e で走らせるので、defaults の書式ミスがあればここで落ちる。
-      - name: Verify macOS defaults apply
-        run: |
-          bash -euo pipefail -c 'source scripts/lib/macos.sh; configure_macos'
-
-          # 書けたことを読み戻して確認する
-          test "$(defaults read com.apple.dock tilesize)" = "26"
-          test "$(defaults read com.apple.dock orientation)" = "right"
-          test "$(defaults read NSGlobalDomain AppleShowAllExtensions)" = "1"
-          echo "macOS defaults OK"
-
-      - name: Verify Sheldon plugins
-        run: |
-          sheldon lock --update
-          test -f ~/.local/share/sheldon/repos/github.com/romkatv/powerlevel10k/powerlevel10k.zsh-theme \
-            || { echo "FAIL: powerlevel10k not fetched"; exit 1; }
-          echo "Sheldon plugins OK"
-
-      - name: Verify .zshrc loads and tools resolve
-        run: |
-          DOTFILES_ZSH="$(pwd)/zsh" zsh -c '
-            source '"$(pwd)"'/zsh/.zshrc
-
-            for tool in mise fzf sheldon ghq; do
-              whence -p $tool > /dev/null || { echo "FAIL: $tool not found"; exit 1; }
-            done
-
-            # fzf のキーバインドが読み込まれていること
-            zle -la | grep -q fzf || { echo "FAIL: fzf key-bindings not loaded"; exit 1; }
-
-            # 自前の関数・エイリアスが生きていること
-            bindkey "^g" | grep -q ghq_fzf_repo || { echo "FAIL: Ctrl+G binding not set"; exit 1; }
-            alias yarn | grep -q "docker compose" || { echo "FAIL: project aliases not loaded"; exit 1; }
-            alias ls | grep -q eza      || { echo "FAIL: eza alias not loaded"; exit 1; }
-
-            echo "zshrc OK"
-          '
-
-      # 置き換え先が入っていない端末では alias を張らないこと。
-      # zsh 設定は symlink で配るので、git pull した直後（brew を流す前）は
-      # bat / eza が無い状態で aliases.zsh が読まれる。そこで無条件に alias を
-      # 張ると cat と ls が「コマンドが見つからない」で止まる。
-      - name: Verify modern CLI aliases are guarded
-        run: |
-          PATH=/usr/bin:/bin zsh -f -c '
-            source '"$(pwd)"'/zsh/aliases.zsh
-
-            for a in cat ls ll la lt lg; do
-              alias $a > /dev/null 2>&1 \
-                && { echo "FAIL: $a aliased though its command is absent"; exit 1; }
-            done
-
-            # 置き換えられていない標準コマンドが動くこと
-            ls / > /dev/null        || { echo "FAIL: ls broken"; exit 1; }
-            cat /etc/hosts > /dev/null || { echo "FAIL: cat broken"; exit 1; }
-
-            echo "alias guards OK"
-          '
+      - run: python3 -m unittest discover -s scripts/tests -v
+      - run: ./scripts/check-brewfile.sh
+      - run: ./scripts/install.sh --with android --with voice

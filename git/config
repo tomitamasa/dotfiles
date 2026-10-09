@@ -1,8 +1,7 @@
 [core]
 	excludesfile = ~/.gitignore_global
-	; delta: git diff/show/log の表示を見やすくする
-	; 既存の git alias は全て --no-pager のため影響なし
-	pager = delta
+	; Use the system pager so a clean Mac does not require delta.
+	pager = less -FRX
 [user]
 	name = tomitamasa
 	email = 41310325+tomitamasa@users.noreply.github.com
@@ -12,10 +11,13 @@
 	rebase = false
 [ghq]
 	root = ~/src
-[interactive]
-	diffFilter = delta --color-only
 [delta]
 	navigate = true
 	line-numbers = true
 [diff]
 	colorMoved = default
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true

@@ -1,0 +1,3 @@
+brew "awscli"
+brew "flyctl"
+cask "gcloud-cli"

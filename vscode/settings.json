@@ -96,5 +96,6 @@
   "extensions.ignoreRecommendations": true,
 "scm.repositories.selectionMode": "single",
 "terminal.integrated.mouseWheelScrollSensitivity": 3,
-"terminal.integrated.gpuAcceleration": "off"
+"terminal.integrated.gpuAcceleration": "off",
+"claudeCode.hideOnboarding": true
 }
