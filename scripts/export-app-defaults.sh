@@ -15,7 +15,6 @@ set -uo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")/.." || exit 1
 
 DOMAINS=(
-  com.lwouis.alt-tab-macos
   com.amethyst.Amethyst
 )
 
